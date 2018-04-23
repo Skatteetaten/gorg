@@ -14,8 +14,7 @@ buildscript {
 
   dependencies {
     classpath(
-        'no.skatteetaten.aurora.gradle.plugins:aurora-gradle-plugin:1.2.1',
-        'org.springframework.cloud:spring-cloud-contract-gradle-plugin:2.0.0.M8'
+        'no.skatteetaten.aurora.gradle.plugins:aurora-gradle-plugin:1.2.1'
     )
   }
 }
@@ -33,7 +32,6 @@ ext.aurora = [
 
 apply plugin: 'io.spring.dependency-management'
 apply plugin: 'no.skatteetaten.plugins.aurora'
-apply plugin: 'spring-cloud-contract'
 
 repositories repos
 
@@ -42,12 +40,6 @@ repositories repos
 configurations.archives.artifacts.removeIf { !it.archiveTask.enabled }
 
 group = 'no.skatteetaten.aurora'
-
-dependencyManagement {
-  imports {
-    mavenBom "org.springframework.cloud:spring-cloud-contract-dependencies:2.0.0.M8"
-  }
-}
 
 def junitJupiterVersion = dependencyManagement.importedProperties['junit-jupiter.version']
 dependencies {
@@ -79,10 +71,6 @@ dependencies {
       'io.mockk:mockk:1.7.10',
       'com.willowtreeapps.assertk:assertk:0.9'
   ].each { testCompile(it) { exclude group: 'junit' } }
-
-  testCompile('org.springframework.cloud:spring-cloud-starter-contract-verifier') {
-    exclude group: 'org.codehaus.groovy'
-  }
 
   testImplementation("org.junit.jupiter:junit-jupiter-api")
   testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
@@ -118,9 +106,4 @@ kotlin {
 
 task wrapper(type: Wrapper) {
   gradleVersion = '4.6'
-}
-
-contracts {
-  packageWithBaseClasses = 'no.skatteetaten.aurora.mokey.contracts'
-  targetFramework = 'Spock'
 }
