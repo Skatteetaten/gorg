@@ -1,7 +1,7 @@
 # Grog
 <img align="right" src="https://vignette.wikia.nocookie.net/muppet/images/2/28/Mokey.jpg/revision/latest/scale-to-width-down/280?cb=2012123116482">
 
-Gorg is under development
+Gorg is under development.
 
 The component is named after Gorg from the TV-show Fraggle Rock (http://muppet.wikia.com/wiki/Mokey_Fraggle).
 
