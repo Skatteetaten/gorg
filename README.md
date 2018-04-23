@@ -1,11 +1,11 @@
-# Mokey
+# Grog
 <img align="right" src="https://vignette.wikia.nocookie.net/muppet/images/2/28/Mokey.jpg/revision/latest/scale-to-width-down/280?cb=2012123116482">
 
-Mokey is a crawler that crawls an OpenShift cluster caching information about all applications in the cluster. 
+Gorg is under development
 
-The component is named after the Mokey Fraggle (http://muppet.wikia.com/wiki/Mokey_Fraggle). 
+The component is named after Gorg from the TV-show Fraggle Rock (http://muppet.wikia.com/wiki/Mokey_Fraggle).
 
-
+<!---
 ## How to run locally
  - Log into your OpenShift cluster with `oc`
  - Start the Main class
@@ -29,3 +29,4 @@ Create a file  src/main/http/rest-client.env.json
   
 Fill in the token value with a valid ocp token from `oc whoami -t`
 Run the http commands from Intellij
+-->
