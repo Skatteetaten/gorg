@@ -10,7 +10,7 @@ Aurora Openshift Paas <utvpaas@skatteetaten.no>
 [introduction]
 == Introduction
 
-This document gives an overview of the Mokey API (part of the Aurora API).
+This document gives an overview of the Gorg API (part of the Aurora API).
 
 [[overview]]
 == Overview
