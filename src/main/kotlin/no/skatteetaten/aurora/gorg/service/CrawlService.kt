@@ -56,7 +56,7 @@ class CrawlService {
                     DefaultOpenShiftClient().namespaces().withName(it.name).delete() // deletes namespace
                     logger.info("Project ${it.name} gobbled, tastes like chicken!")
                 }
-
+        logger.info("No more projects to feed on, will try again in a while")
 
     }
 
