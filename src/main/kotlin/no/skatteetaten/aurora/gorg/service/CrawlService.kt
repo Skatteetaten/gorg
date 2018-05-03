@@ -13,6 +13,7 @@ class CrawlService {
 
     val logger: Logger = LoggerFactory.getLogger(CrawlService::class.java)
 
+    // Test method
     fun findAllProjects(): List<String> {
         return DefaultOpenShiftClient().projects().list().items
                 .filter { it.metadata.labels != null }
@@ -32,7 +33,7 @@ class CrawlService {
                 .filter { it.metadata.labels.containsKey("removeAfter") }
                 .map {
                     val removeAfter = it.metadata.labels.get("removeAfter")?.toLong() ?: 0
-                    ProjectInfo( // Creates objects that holds Projectname and ttl time
+                    ProjectInfo( // Creates objects that contain Projectname and ttl time
                             it.metadata.name,
                             removeAfter
                     )
@@ -42,17 +43,18 @@ class CrawlService {
                 }
     }
 
-    @Scheduled(fixedRate = 10_000, initialDelay = 10_000)
+    @Scheduled(fixedRate = 300_000, initialDelay = 2_000)
     fun testKim() {
-        logger.info("Searching for project to delete")
+        logger.info("Searching for projects to gorge")
 
         val namespacesToRemove = listTtl()
 
-                .filter { it.name == "paas-kim-dev" }
+                .filter { it.name != "paas-kim-dev" }
                 .forEach {
                     val removeAfterDate = java.text.SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(java.util.Date(it.removeAfter * 1000)) // converts epoch to date
-                    logger.info("finding project to remove: ${it.name}. Time-to-live expired $removeAfterDate")
-                    DefaultOpenShiftClient().namespaces().withName(it.name).delete()
+                    logger.info("Found project to devour: ${it.name}. time-to-live expired $removeAfterDate (dd/MM/yyyy HH:mm:ss)")
+                    DefaultOpenShiftClient().namespaces().withName(it.name).delete() // deletes namespace
+                    logger.info("Project ${it.name} gobbled, tastes like chicken!")
                 }
 
 
