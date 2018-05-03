@@ -49,7 +49,7 @@ class CrawlService {
 
         val namespacesToRemove = listTtl()
 
-                .filter { it.name != "paas-kim-dev" }
+                //.filter { it.name != "paas-kim-dev" } // does not delete itself
                 .forEach {
                     val removeAfterDate = java.text.SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(java.util.Date(it.removeAfter * 1000)) // converts epoch to date
                     logger.info("Found project to devour: ${it.name}. time-to-live expired $removeAfterDate (dd/MM/yyyy HH:mm:ss)")
