@@ -20,6 +20,7 @@ class CrawlService(val client: OpenShiftClient) {
 
     fun findTemporaryApplications(now: Instant): List<TemporaryApplication> {
         val dcs = client.deploymentConfigs()
+                .inAnyNamespace()
                 .withLabel(REMOVE_AFTER_LABEL)
                 .list().items
 
