@@ -58,7 +58,7 @@ dependencies {
       "org.springframework.boot:spring-boot-starter-hateoas"
   )
 
-  [
+  testCompile(
       'org.spockframework:spock-core:1.1-groovy-2.4',
       'org.spockframework:spock-spring:1.1-groovy-2.4',
       'org.springframework.restdocs:spring-restdocs-mockmvc',
@@ -70,7 +70,7 @@ dependencies {
       'io.fabric8:openshift-server-mock:3.1.8',
       'io.mockk:mockk:1.7.10',
       'com.willowtreeapps.assertk:assertk:0.9'
-  ].each { testCompile(it) { exclude group: 'junit' } }
+  )
 
   testImplementation("org.junit.jupiter:junit-jupiter-api")
   testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
