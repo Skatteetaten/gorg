@@ -20,8 +20,8 @@ buildscript {
 }
 
 plugins {
-  id "org.jetbrains.kotlin.jvm" version "1.2.40"
-  id "org.jetbrains.kotlin.plugin.spring" version "1.2.40"
+  id "org.jetbrains.kotlin.jvm" version "1.2.41"
+  id "org.jetbrains.kotlin.plugin.spring" version "1.2.41"
   id 'org.springframework.boot' version '2.0.0.RELEASE'
 }
 
@@ -45,7 +45,7 @@ def junitJupiterVersion = dependencyManagement.importedProperties['junit-jupiter
 dependencies {
 
   compile(
-      "org.jetbrains.kotlin:kotlin-reflect:1.2.40",
+      "org.jetbrains.kotlin:kotlin-reflect:1.2.41",
       'org.jetbrains.kotlin:kotlin-stdlib-jdk8',
       'com.fasterxml.jackson.module:jackson-module-kotlin',
       'com.fasterxml.jackson.datatype:jackson-datatype-jsr310',
@@ -69,7 +69,7 @@ dependencies {
       'org.springframework.boot:spring-boot-starter-test',
       'io.fabric8:openshift-server-mock:3.1.8',
       'io.mockk:mockk:1.7.10',
-      'com.willowtreeapps.assertk:assertk:0.9'
+      'com.willowtreeapps.assertk:assertk:0.10'
   )
 
   testImplementation("org.junit.jupiter:junit-jupiter-api")

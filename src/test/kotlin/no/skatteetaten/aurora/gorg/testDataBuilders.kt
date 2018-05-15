@@ -11,7 +11,8 @@ import java.time.Instant
 
 data class DeploymentConfigDataBuilder(val dcNamespace: String = "namespace",
                                        val dcKind: String = "Deployment",
-                                       val dcName: String = "name") {
+                                       val dcName: String = "name",
+                                       val dcRemoveAfter: Instant = Instant.now().plusSeconds(60)) {
 
     fun build(): DeploymentConfig {
         return newDeploymentConfig {
@@ -19,7 +20,7 @@ data class DeploymentConfigDataBuilder(val dcNamespace: String = "namespace",
             metadata = newObjectMeta {
                 name = dcName
                 namespace = dcNamespace
-                labels = mapOf("removeAfter" to Instant.now().epochSecond.toString())
+                labels = mapOf("removeAfter" to dcRemoveAfter.epochSecond.toString())
             }
         }
     }
@@ -28,7 +29,8 @@ data class DeploymentConfigDataBuilder(val dcNamespace: String = "namespace",
 data class ProjectDataBuilder(
         val pName: String = "name",
         val pAffiliation: String = "affiliation",
-        val pPhase: String = "phase") {
+        val pPhase: String = "phase",
+        val pRemoveAfter: Instant = Instant.now().plusSeconds(60)) {
 
     fun build(): Project {
         return newProject {
@@ -38,7 +40,7 @@ data class ProjectDataBuilder(
             metadata {
                 name = pName
                 labels = mapOf("affiliation" to pAffiliation,
-                        "removeAfter" to Instant.now().epochSecond.toString())
+                        "removeAfter" to pRemoveAfter.epochSecond.toString())
             }
         }
     }
