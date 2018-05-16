@@ -11,48 +11,56 @@ class DeleteService(val client: OpenShiftClient) {
 
     val logger: Logger = LoggerFactory.getLogger(DeleteService::class.java)
 
-    fun deleteProject(project: CrawlService.TemporaryProject) {
+    fun deleteProject(project: CrawlService.TemporaryProject): Boolean {
         logger.info("Found project to devour: ${project.name}. time-to-live expired ${project.removalTime}")
-        client.projects().withName(project.name).delete() // deletes namespace
-        logger.info("Project ${project.name} gobbled, tastes like chicken!")
+        return client.projects().withName(project.name).delete().also {
+            if(it) {
+                logger.info("Project ${project.name} gobbled, tastes like chicken!")
+            } else {
+                logger.warn("Unable to delete project ${project.name}")
+            }
+        }
     }
 
-    fun deleteApplication(dc: CrawlService.TemporaryApplication) {
+    fun deleteApplication(dc: CrawlService.TemporaryApplication): Boolean {
         logger.info("Found app to devour: ${dc.name}. time-to-live expired ${dc.removalTime}")
-        client.deploymentConfigs()
+        val deleted = mutableListOf<Boolean>()
+
+        deleted.add(client.deploymentConfigs()
                 .inNamespace(dc.namespace)
                 .withLabel("app", dc.name)
-                .delete()
+                .delete())
 
-        client.services()
+        deleted.add(client.services()
                 .inNamespace(dc.namespace)
                 .withLabel("app", dc.name)
-                .delete()
+                .delete())
 
-        client.buildConfigs()
+        deleted.add(client.buildConfigs()
                 .inNamespace(dc.namespace)
                 .withLabel("app", dc.name)
-                .delete()
+                .delete())
 
-        client.configMaps()
+        deleted.add(client.configMaps()
                 .inNamespace(dc.namespace)
                 .withLabel("app", dc.name)
-                .delete()
+                .delete())
 
-        client.secrets()
+        deleted.add(client.secrets()
                 .inNamespace(dc.namespace)
                 .withLabel("app", dc.name)
-                .delete()
+                .delete())
 
-        client.imageStreams()
+        deleted.add(client.imageStreams()
                 .inNamespace(dc.namespace)
                 .withLabel("app", dc.name)
-                .delete()
+                .delete())
 
-        client.routes()
+        deleted.add(client.routes()
                 .inNamespace(dc.namespace)
                 .withLabel("app", dc.name)
-                .delete()
+                .delete())
 
+        return deleted.all { true }
     }
 }
