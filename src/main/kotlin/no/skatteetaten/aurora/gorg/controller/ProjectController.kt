@@ -9,13 +9,12 @@ import org.springframework.web.bind.annotation.RestController
 import java.time.Instant
 
 @RestController
-@RequestMapping("/api/project")
+@RequestMapping("/api/projects")
 class ProjectController(val crawler: CrawlService, val deletionService: DeleteService) {
 
     @DeleteMapping
     fun deleteProjects() {
-        val now = Instant.now()
-        crawler.findTemporaryProjects(now)
+        crawler.findTemporaryProjects(Instant.now())
                 .filter { it.ttl.isNegative }
                 .forEach { deletionService.deleteProject(it) }
 
@@ -23,8 +22,7 @@ class ProjectController(val crawler: CrawlService, val deletionService: DeleteSe
 
     @GetMapping
     fun list(): List<CrawlService.TemporaryProject> {
-        val now = Instant.now()
-        return crawler.findTemporaryProjects(now)
+        return crawler.findTemporaryProjects(Instant.now())
     }
 
 }

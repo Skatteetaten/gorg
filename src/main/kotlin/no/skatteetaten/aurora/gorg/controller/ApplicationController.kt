@@ -21,8 +21,7 @@ class ApplicationController(val crawler: CrawlService, val deletionService: Dele
     }
 
     @GetMapping
-    fun list(): List<CrawlService.TemporaryApplication> {
-        return crawler.findTemporaryApplications(Instant.now())
-    }
+    fun list(): List<CrawlService.TemporaryApplication> =
+            crawler.findTemporaryApplications(Instant.now())
 
 }

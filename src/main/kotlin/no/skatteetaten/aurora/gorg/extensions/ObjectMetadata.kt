@@ -4,8 +4,8 @@ import io.fabric8.kubernetes.api.model.HasMetadata
 import java.lang.IllegalStateException
 import java.time.Instant
 
-val REMOVE_AFTER_LABEL = "removeAfter"
-val TERMINATING_PHASE = "Terminating"
+const val REMOVE_AFTER_LABEL = "removeAfter"
+const val TERMINATING_PHASE = "Terminating"
 
 fun HasMetadata.removalTime(): Instant {
     return this.metadata.labels[REMOVE_AFTER_LABEL]?.let {
@@ -14,5 +14,5 @@ fun HasMetadata.removalTime(): Instant {
 }
 
 fun <T : HasMetadata> List<T>.isBefore(now: Instant): List<T> {
-    return this.filter { it.removalTime()?.isBefore(now) ?: false }
+    return this.filter { it.removalTime().isBefore(now) ?: false }
 }

@@ -4,8 +4,6 @@ import io.fabric8.openshift.client.OpenShiftClient
 import no.skatteetaten.aurora.gorg.extensions.REMOVE_AFTER_LABEL
 import no.skatteetaten.aurora.gorg.extensions.TERMINATING_PHASE
 import no.skatteetaten.aurora.gorg.extensions.removalTime
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import java.time.Duration
 import java.time.Instant
@@ -13,10 +11,6 @@ import java.time.Instant
 
 @Service
 class CrawlService(val client: OpenShiftClient) {
-
-    val logger: Logger = LoggerFactory.getLogger(CrawlService::class.java)
-
-
 
     fun findTemporaryApplications(now: Instant): List<TemporaryApplication> {
         val dcs = client.deploymentConfigs()
@@ -37,7 +31,6 @@ class CrawlService(val client: OpenShiftClient) {
     }
 
 
-
     fun findTemporaryProjects(now: Instant): List<TemporaryProject> {
         val projects = client.projects()
                 .withLabel(REMOVE_AFTER_LABEL)
@@ -45,8 +38,8 @@ class CrawlService(val client: OpenShiftClient) {
 
         return projects
                 .filter { it.status.phase != TERMINATING_PHASE }
-                .map{
-                    val removalTime= it.removalTime()
+                .map {
+                    val removalTime = it.removalTime()
                     TemporaryProject(it.metadata.name,
                             it.metadata.labels["affiliation"] ?: "",
                             Duration.between(now, removalTime),
@@ -55,8 +48,8 @@ class CrawlService(val client: OpenShiftClient) {
 
     }
 
-    data class TemporaryApplication(val name:String, val namespace:String, val ttl: Duration, val removalTime: Instant)
-    data class TemporaryProject(val name:String, val affiliation:String, val ttl: Duration, val removalTime: Instant)
+    data class TemporaryApplication(val name: String, val namespace: String, val ttl: Duration, val removalTime: Instant)
+    data class TemporaryProject(val name: String, val affiliation: String, val ttl: Duration, val removalTime: Instant)
 
 
 }
