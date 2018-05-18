@@ -4,6 +4,7 @@ import assertk.assert
 import assertk.assertions.isFalse
 import assertk.assertions.isTrue
 import no.skatteetaten.aurora.gorg.ProjectDataBuilder
+import no.skatteetaten.aurora.gorg.TemporaryApplicationDataBuilder
 import no.skatteetaten.aurora.gorg.TemporaryProjectDataBuilder
 import org.junit.jupiter.api.Test
 
@@ -26,5 +27,11 @@ class DeleteServiceTest : AbstractOpenShiftServerTest() {
         assert(deleted).isFalse()
     }
 
+    @Test
+    fun `Delete existing application`() {
+        val deleteService = DeleteService(openShiftServer.openshiftClient)
+        val deleted = deleteService.deleteApplication(TemporaryApplicationDataBuilder().build())
+        assert(deleted).isTrue()
+    }
 
 }

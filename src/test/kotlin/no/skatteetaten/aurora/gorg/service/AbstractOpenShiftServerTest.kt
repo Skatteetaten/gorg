@@ -9,12 +9,12 @@ open class AbstractOpenShiftServerTest {
     protected val openShiftServer = OpenShiftServer(false, true)
 
     @BeforeEach
-    fun setUp() {
+    fun setUpOpenShiftServer() {
         openShiftServer.before()
     }
 
     @AfterEach
-    fun tearDown() {
+    fun tearDownOpenShiftServer() {
         openShiftServer.after()
     }
 }

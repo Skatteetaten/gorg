@@ -56,3 +56,10 @@ data class TemporaryProjectDataBuilder(
                     ttl = Duration.ZERO,
                     removalTime = Instant.now())
 }
+
+data class TemporaryApplicationDataBuilder(val name: String = "name",
+                                           val namespace: String = "namespace") {
+
+    fun build(): CrawlService.TemporaryApplication =
+            CrawlService.TemporaryApplication(name = name, namespace = namespace, ttl = Duration.ZERO, removalTime = Instant.now())
+}
