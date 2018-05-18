@@ -14,7 +14,7 @@ class DeleteService(val client: OpenShiftClient) {
     fun deleteProject(project: CrawlService.TemporaryProject): Boolean {
         logger.info("Found project to devour: ${project.name}. time-to-live expired ${project.removalTime}")
         return client.projects().withName(project.name).delete().also {
-            if(it) {
+            if (it) {
                 logger.info("Project ${project.name} gobbled, tastes like chicken!")
             } else {
                 logger.warn("Unable to delete project ${project.name}")
@@ -61,6 +61,6 @@ class DeleteService(val client: OpenShiftClient) {
                 .withLabel("app", dc.name)
                 .delete())
 
-        return deleted.all { true }
+        return deleted.all { it }
     }
 }
