@@ -18,8 +18,7 @@ class CrawlService(val client: OpenShiftClient) {
                 .withLabel(REMOVE_AFTER_LABEL)
                 .list().items
 
-        return dcs
-                .map {
+        return dcs.map {
                     val removalTime = it.removalTime()
                     TemporaryApplication(it.metadata.name,
                             it.metadata.namespace,

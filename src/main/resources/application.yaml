@@ -23,24 +23,15 @@ logging:
         catalina: WARN
         velocity: WARN
 
-boober-api-url: "http://boober/api"
-metrics-hostname: "http://metrics.skead.no"
-
 ---
 spring:
     profiles: local
-
-mokey:
-    cache:
-        enabled: true
-        affiliations: aurora,paas,sirius,safir
 
 logging:
     pattern:
       console: "%d [%-9.9thread] %highlight(%-5level) %cyan(%logger:%L) %X - %msg %n%rEx{full}"
     # add mokey.openshift.token to ~/.spring-boot-devtools.properties
 
-openshift-cluster: utv
 
 ---
 spring:
