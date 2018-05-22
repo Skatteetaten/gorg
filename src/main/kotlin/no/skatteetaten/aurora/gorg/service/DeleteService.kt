@@ -1,5 +1,6 @@
 package no.skatteetaten.aurora.gorg.service
 
+import io.fabric8.kubernetes.api.model.HasMetadata
 import io.fabric8.openshift.client.OpenShiftClient
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -17,50 +18,30 @@ class DeleteService(val client: OpenShiftClient) {
             if (it) {
                 logger.info("Project ${project.name} gobbled, tastes like chicken!")
             } else {
-                logger.warn("Unable to delete project ${project.name}")
+                logger.error("Unable to delete project=${project.name}")
             }
         }
     }
 
     fun deleteApplication(dc: CrawlService.TemporaryApplication): Boolean {
         logger.info("Found app to devour: ${dc.name}. time-to-live expired ${dc.removalTime}")
-        val deleted = mutableListOf<Boolean>()
 
-        deleted.add(client.deploymentConfigs()
-                .inNamespace(dc.namespace)
-                .withLabel("app", dc.name)
-                .delete())
+        val lst = listOf(client.deploymentConfigs(),
+                client.services(),
+                client.buildConfigs(),
+                client.configMaps(),
+                client.secrets(),
+                client.imageStreams(),
+                client.routes())
 
-        deleted.add(client.services()
-                .inNamespace(dc.namespace)
-                .withLabel("app", dc.name)
-                .delete())
+        val deleted = lst.map {
+            it.inNamespace(dc.namespace).withLabel("app", dc.name).delete()
+        }
 
-        deleted.add(client.buildConfigs()
-                .inNamespace(dc.namespace)
-                .withLabel("app", dc.name)
-                .delete())
-
-        deleted.add(client.configMaps()
-                .inNamespace(dc.namespace)
-                .withLabel("app", dc.name)
-                .delete())
-
-        deleted.add(client.secrets()
-                .inNamespace(dc.namespace)
-                .withLabel("app", dc.name)
-                .delete())
-
-        deleted.add(client.imageStreams()
-                .inNamespace(dc.namespace)
-                .withLabel("app", dc.name)
-                .delete())
-
-        deleted.add(client.routes()
-                .inNamespace(dc.namespace)
-                .withLabel("app", dc.name)
-                .delete())
-
-        return deleted.all { it }
+        return deleted.all { it }.also {
+            if (!it) {
+                logger.error("Unable to delete application=${dc.name}")
+            }
+        }
     }
 }
