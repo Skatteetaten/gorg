@@ -27,6 +27,10 @@ logging:
 spring:
     profiles: local
 
+gorg:
+    username: gorg
+    password: gorg
+
 logging:
     pattern:
       console: "%d [%-9.9thread] %highlight(%-5level) %cyan(%logger:%L) %X - %msg %n%rEx{full}"

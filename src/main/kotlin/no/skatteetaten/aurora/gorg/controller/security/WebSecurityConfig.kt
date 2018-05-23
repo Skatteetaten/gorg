@@ -1,64 +1,59 @@
 package no.skatteetaten.aurora.gorg.controller.security
 
 import org.slf4j.LoggerFactory
-import org.slf4j.MDC
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
+import org.springframework.context.annotation.Configuration
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter
 import org.springframework.security.config.http.SessionCreationPolicy
-import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationProvider
-import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken
-import org.springframework.security.web.authentication.preauth.RequestHeaderAuthenticationFilter
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
+import org.springframework.security.crypto.password.NoOpPasswordEncoder
+import org.springframework.security.web.authentication.www.BasicAuthenticationEntryPoint
 import org.springframework.security.web.util.matcher.RequestMatcher
 import javax.servlet.http.HttpServletRequest
+import org.springframework.security.crypto.password.PasswordEncoder
 
+
+
+@Configuration
 @EnableWebSecurity
 class WebSecurityConfig(
-        val authenticationManager: BearerAuthenticationManager,
-        @Value("\${management.server.port}") val managementPort: Int
+        @Value("\${management.server.port}") val managementPort: Int,
+        @Value("\${gorg.username}") val userName: String,
+        @Value("\${gorg.password}") val password: String,
+        val passwordEncoder: PasswordEncoder,
+        val authEntryPoint: BasicAuthenticationEntryPoint
+
 ) : WebSecurityConfigurerAdapter() {
 
     private val logger = LoggerFactory.getLogger(WebSecurityConfig::class.java)
 
-    override fun configure(http: HttpSecurity) {
-
-        http.csrf().disable()
-        http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-
-        http.authenticationProvider(preAuthenticationProvider())
-                .addFilter(requestHeaderAuthenticationFilter())
-                .authorizeRequests()
-                .requestMatchers(forPort(managementPort)).permitAll()
-                .antMatchers("/docs/index.html").permitAll()
-                .antMatchers("/").permitAll()
-                .antMatchers("/api/**").permitAll()
-                .anyRequest().authenticated()
+    @Autowired
+    @Throws(Exception::class)
+    fun configureGlobalSecurity(auth: AuthenticationManagerBuilder) {
+        auth.inMemoryAuthentication().withUser(userName).password(passwordEncoder.encode(password)).roles("USER")
     }
-
 
     private fun forPort(port: Int) = RequestMatcher { request: HttpServletRequest -> port == request.localPort }
 
-    @Bean
-    internal fun preAuthenticationProvider() = PreAuthenticatedAuthenticationProvider().apply {
-        setPreAuthenticatedUserDetailsService({ it: PreAuthenticatedAuthenticationToken ->
+    override fun configure(http: HttpSecurity) {
 
-            val principal = it.principal as io.fabric8.openshift.api.model.User
-            val fullName = principal.fullName
-            val username = principal.metadata.name
+        http.csrf().disable().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS) //We don't need sessions to be created.
 
-            MDC.put("user", username)
-            User(username, it.credentials as String, fullName).also {
-                logger.info("Logged in user username=$username, name='$fullName' tokenSnippet=${it.tokenSnippet}")
-            }
-        })
+        http.authorizeRequests()
+                .requestMatchers(forPort(managementPort)).permitAll()
+                .antMatchers("/docs/index.html").permitAll()
+                .antMatchers("/").permitAll()
+                .antMatchers("/api/**").hasRole("USER")
+                 .and().httpBasic().realmName("GORG").authenticationEntryPoint(authEntryPoint)
+
     }
 
-    @Bean
-    internal fun requestHeaderAuthenticationFilter() = RequestHeaderAuthenticationFilter().apply {
-        setPrincipalRequestHeader("Authorization")
-        setExceptionIfHeaderMissing(false)
-        setAuthenticationManager(authenticationManager)
-    }
+
+
 }
+
