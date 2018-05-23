@@ -1,5 +1,6 @@
 package no.skatteetaten.aurora.gorg.service
 
+import io.fabric8.kubernetes.api.model.HasMetadata
 import io.fabric8.openshift.client.OpenShiftClient
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -11,48 +12,36 @@ class DeleteService(val client: OpenShiftClient) {
 
     val logger: Logger = LoggerFactory.getLogger(DeleteService::class.java)
 
-    fun deleteProject(project: CrawlService.TemporaryProject) {
+    fun deleteProject(project: CrawlService.TemporaryProject): Boolean {
         logger.info("Found project to devour: ${project.name}. time-to-live expired ${project.removalTime}")
-        client.projects().withName(project.name).delete() // deletes namespace
-        logger.info("Project ${project.name} gobbled, tastes like chicken!")
+        return client.projects().withName(project.name).delete().also {
+            if (it) {
+                logger.info("Project ${project.name} gobbled, tastes like chicken!")
+            } else {
+                logger.error("Unable to delete project=${project.name}")
+            }
+        }
     }
 
-    fun deleteApplication(dc: CrawlService.TemporaryApplication) {
+    fun deleteApplication(dc: CrawlService.TemporaryApplication): Boolean {
         logger.info("Found app to devour: ${dc.name}. time-to-live expired ${dc.removalTime}")
-        client.deploymentConfigs()
-                .inNamespace(dc.namespace)
-                .withLabel("app", dc.name)
-                .delete()
 
-        client.services()
-                .inNamespace(dc.namespace)
-                .withLabel("app", dc.name)
-                .delete()
+        val lst = listOf(client.deploymentConfigs(),
+                client.services(),
+                client.buildConfigs(),
+                client.configMaps(),
+                client.secrets(),
+                client.imageStreams(),
+                client.routes())
 
-        client.buildConfigs()
-                .inNamespace(dc.namespace)
-                .withLabel("app", dc.name)
-                .delete()
+        val deleted = lst.map {
+            it.inNamespace(dc.namespace).withLabel("app", dc.name).delete()
+        }
 
-        client.configMaps()
-                .inNamespace(dc.namespace)
-                .withLabel("app", dc.name)
-                .delete()
-
-        client.secrets()
-                .inNamespace(dc.namespace)
-                .withLabel("app", dc.name)
-                .delete()
-
-        client.imageStreams()
-                .inNamespace(dc.namespace)
-                .withLabel("app", dc.name)
-                .delete()
-
-        client.routes()
-                .inNamespace(dc.namespace)
-                .withLabel("app", dc.name)
-                .delete()
-
+        return deleted.all { it }.also {
+            if (!it) {
+                logger.error("Unable to delete application=${dc.name}")
+            }
+        }
     }
 }

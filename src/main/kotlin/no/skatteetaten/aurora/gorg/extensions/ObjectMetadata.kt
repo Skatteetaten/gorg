@@ -12,7 +12,3 @@ fun HasMetadata.removalTime(): Instant {
         Instant.ofEpochSecond(it.toLong())
     } ?: throw IllegalStateException("removeAfter is not set or valid timstamp")
 }
-
-fun <T : HasMetadata> List<T>.isBefore(now: Instant): List<T> {
-    return this.filter { it.removalTime().isBefore(now) ?: false }
-}
