@@ -4,7 +4,7 @@
 Gorg is a service that deletes projects and applications when they exists past their respective time-to-live labels.
 The service is currently under development
 
-The component is named after Gorg from the TV-show Fraggle Rock (http://muppet.wikia.com/wiki/Mokey_Fraggle).
+The component is named after Junior Gorg from the TV-show Fraggle Rock (http://muppet.wikia.com/wiki/Junior_Gorg).
 
 
 ## How it works
