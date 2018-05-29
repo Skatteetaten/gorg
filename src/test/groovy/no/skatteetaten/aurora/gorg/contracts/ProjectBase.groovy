@@ -5,7 +5,7 @@ import java.time.Instant
 
 import no.skatteetaten.aurora.gorg.controller.ProjectController
 import no.skatteetaten.aurora.gorg.service.CrawlService
-import no.skatteetaten.aurora.gorg.service.RenewService
+import no.skatteetaten.aurora.gorg.service.DeleteService
 
 class ProjectBase extends AbstractContractBase {
 
@@ -15,7 +15,7 @@ class ProjectBase extends AbstractContractBase {
     def crawlService = Mock(CrawlService) {
       findTemporaryProjects(_ as Instant) >> [createTemporaryProject()]
     }
-    def deleteService = Mock(RenewService)
+    def deleteService = Mock(DeleteService)
 
     def controller = new ProjectController(crawlService, deleteService)
     setupMockMvc(controller)

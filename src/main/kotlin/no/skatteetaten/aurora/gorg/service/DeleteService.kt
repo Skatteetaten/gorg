@@ -7,9 +7,9 @@ import org.springframework.stereotype.Service
 
 
 @Service
-class RenewService(val client: OpenShiftClient) {
+class DeleteService(val client: OpenShiftClient) {
 
-    val logger: Logger = LoggerFactory.getLogger(RenewService::class.java)
+    val logger: Logger = LoggerFactory.getLogger(DeleteService::class.java)
 
     fun deleteProject(project: CrawlService.TemporaryProject): Boolean {
         logger.info("Found project to devour: ${project.name}. time-to-live expired ${project.removalTime}")
