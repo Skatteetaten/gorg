@@ -1,11 +1,9 @@
 package no.skatteetaten.aurora.gorg.service
 
-import io.fabric8.kubernetes.api.model.HasMetadata
 import io.fabric8.openshift.client.OpenShiftClient
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
-
 
 @Service
 class DeleteService(val client: OpenShiftClient) {

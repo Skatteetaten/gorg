@@ -33,5 +33,4 @@ class DeleteServiceTest : AbstractOpenShiftServerTest() {
         val deleted = deleteService.deleteApplication(TemporaryApplicationDataBuilder().build())
         assert(deleted).isTrue()
     }
-
 }

@@ -24,9 +24,8 @@ class ApplicationConfig : BeanPostProcessor {
 
     @Bean
     fun basic(): BasicAuthenticationEntryPoint {
-        return BasicAuthenticationEntryPoint().also{
-            it.realmName ="GORG"
+        return BasicAuthenticationEntryPoint().also {
+            it.realmName = "GORG"
         }
     }
-
 }
