@@ -26,7 +26,6 @@ class CrawlServiceTest : AbstractOpenShiftServerTest() {
         assert(applications[0].removalTime).isNotNull()
     }
 
-
     @Test
     fun `Find temporary projects`() {
         val project = ProjectDataBuilder().build()

@@ -17,12 +17,10 @@ class ProjectController(val crawler: CrawlService, val deletionService: DeleteSe
         crawler.findTemporaryProjects(Instant.now())
                 .filter { it.ttl.isNegative }
                 .forEach { deletionService.deleteProject(it) }
-
     }
 
     @GetMapping
     fun list(): List<CrawlService.TemporaryProject> {
         return crawler.findTemporaryProjects(Instant.now())
     }
-
 }

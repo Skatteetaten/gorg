@@ -17,11 +17,9 @@ class ApplicationController(val crawler: CrawlService, val deletionService: Dele
         crawler.findTemporaryApplications(Instant.now())
                 .filter { it.ttl.isNegative }
                 .forEach { deletionService.deleteApplication(it) }
-
     }
 
     @GetMapping
     fun list(): List<CrawlService.TemporaryApplication> =
             crawler.findTemporaryApplications(Instant.now())
-
 }

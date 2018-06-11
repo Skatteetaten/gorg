@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service
 import java.time.Duration
 import java.time.Instant
 
-
 @Service
 class CrawlService(val client: OpenShiftClient) {
 
@@ -25,10 +24,7 @@ class CrawlService(val client: OpenShiftClient) {
                             Duration.between(now, removalTime),
                             removalTime)
                 }
-
-
     }
-
 
     fun findTemporaryProjects(now: Instant): List<TemporaryProject> {
         val projects = client.projects()
@@ -44,11 +40,8 @@ class CrawlService(val client: OpenShiftClient) {
                             Duration.between(now, removalTime),
                             removalTime)
                 }
-
     }
 
     data class TemporaryApplication(val name: String, val namespace: String, val ttl: Duration, val removalTime: Instant)
     data class TemporaryProject(val name: String, val affiliation: String, val ttl: Duration, val removalTime: Instant)
-
-
 }
