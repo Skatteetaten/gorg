@@ -25,8 +25,6 @@ class WebSecurityConfig(
 
 ) : WebSecurityConfigurerAdapter() {
 
-    private val logger = LoggerFactory.getLogger(WebSecurityConfig::class.java)
-
     @Autowired
     @Throws(Exception::class)
     fun configureGlobalSecurity(auth: AuthenticationManagerBuilder) {
