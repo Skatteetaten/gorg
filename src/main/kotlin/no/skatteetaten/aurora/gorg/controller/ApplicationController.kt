@@ -1,7 +1,7 @@
 package no.skatteetaten.aurora.gorg.controller
 
-import no.skatteetaten.aurora.gorg.service.CrawlService
-import no.skatteetaten.aurora.gorg.service.DeleteService
+import no.skatteetaten.aurora.gorg.service.ApplicationService
+import no.skatteetaten.aurora.gorg.service.TemporaryApplication
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
@@ -10,16 +10,16 @@ import java.time.Instant
 
 @RestController
 @RequestMapping("/api/apps")
-class ApplicationController(val crawler: CrawlService, val deletionService: DeleteService) {
+class ApplicationController(val applicationService: ApplicationService) {
 
     @DeleteMapping
     fun deleteApplications() {
-        crawler.findTemporaryApplications(Instant.now())
+        applicationService.findTemporaryApplications(Instant.now())
                 .filter { it.ttl.isNegative }
-                .forEach { deletionService.deleteApplication(it) }
+                .forEach { applicationService.deleteApplication(it) }
     }
 
     @GetMapping
-    fun list(): List<CrawlService.TemporaryApplication> =
-            crawler.findTemporaryApplications(Instant.now())
+    fun list(): List<TemporaryApplication> =
+        applicationService.findTemporaryApplications(Instant.now())
 }

@@ -2,7 +2,9 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/gorg.iml" filepath="$PROJECT_DIR$/.idea/modules/gorg.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/gorg.iml" filepath="$PROJECT_DIR$/.idea/gorg.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/gorg_main.iml" filepath="$PROJECT_DIR$/.idea/modules/gorg_main.iml" group="gorg" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/gorg_test.iml" filepath="$PROJECT_DIR$/.idea/modules/gorg_test.iml" group="gorg" />
     </modules>
   </component>
 </project>
