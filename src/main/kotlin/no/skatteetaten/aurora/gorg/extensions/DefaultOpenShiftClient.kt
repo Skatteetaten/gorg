@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import io.fabric8.kubernetes.api.model.ObjectMeta
 import io.fabric8.kubernetes.client.KubernetesClientException
+import io.fabric8.openshift.api.model.Project
 import io.fabric8.openshift.client.DefaultOpenShiftClient
 import okhttp3.Request
 
@@ -37,6 +38,8 @@ fun DefaultOpenShiftClient.applicationDeploymentsTemporary(): List<ApplicationDe
     }
 }
 
+
+/* TO-DO: Builds and Projects */
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)

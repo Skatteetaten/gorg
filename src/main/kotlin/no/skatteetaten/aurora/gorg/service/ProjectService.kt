@@ -1,5 +1,6 @@
 package no.skatteetaten.aurora.gorg.service
 
+import io.fabric8.openshift.client.DefaultOpenShiftClient
 import io.fabric8.openshift.client.OpenShiftClient
 import no.skatteetaten.aurora.gorg.extensions.REMOVE_AFTER_LABEL
 import no.skatteetaten.aurora.gorg.extensions.TERMINATING_PHASE
@@ -10,7 +11,7 @@ import java.time.Duration
 import java.time.Instant
 
 @Service
-class ProjectService(val client: OpenShiftClient) {
+class ProjectService(val client: DefaultOpenShiftClient) {
 
     val logger = LoggerFactory.getLogger(ProjectService::class.java)
 
