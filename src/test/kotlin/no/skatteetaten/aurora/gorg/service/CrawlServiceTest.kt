@@ -12,7 +12,7 @@ import java.time.Instant
 
 class CrawlServiceTest : AbstractOpenShiftServerTest() {
 
-    @Test
+ /*   @Test
     fun `Find temporary applications`() {
         val dc = DeploymentConfigDataBuilder().build()
         openShiftServer.openshiftClient.inNamespace("namespace").deploymentConfigs().create(dc)
@@ -38,5 +38,5 @@ class CrawlServiceTest : AbstractOpenShiftServerTest() {
         assert(projects[0].affiliation).isEqualTo("affiliation")
         assert(projects[0].ttl.seconds).isGreaterThan(0)
         assert(projects[0].removalTime).isNotNull()
-    }
+    }*/
 }

@@ -2,6 +2,7 @@ package no.skatteetaten.aurora.gorg.service
 
 import io.fabric8.openshift.client.OpenShiftClient
 import no.skatteetaten.aurora.gorg.extensions.REMOVE_AFTER_LABEL
+import no.skatteetaten.aurora.gorg.extensions.removalTime
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import java.time.Duration
@@ -13,12 +14,18 @@ class BuildService(val client: OpenShiftClient){
     val logger = LoggerFactory.getLogger(BuildService::class.java)
 
     fun findTemporaryBuilds(now: Instant): List<TemporaryBuild> {
+
         val builds = client.builds()
-            .withLabel(REMOVE_AFTER_LABEL)
+          //  .withLabel(REMOVE_AFTER_LABEL)
             .list().items
 
         return builds.map {
-            TemporaryBuild("", "", Duration.ZERO, Instant.now())
+            val removalTime = it.removalTime()
+            TemporaryBuild(
+                it.metadata.name,
+                it.metadata.namespace,
+                Duration.between(now, removalTime),
+                removalTime)
         }
 
     }

@@ -1,4 +1,7 @@
 buildscript {
+  ext.kotlin_version = "1.2.70"
+  ext.springBootVersion = "1.5.12.RELEASE"
+  ext.auroraStartersVersion = "3.7.0"
   ext.repos = {
     mavenCentral()
     jcenter()
@@ -15,16 +18,16 @@ buildscript {
   dependencies {
     classpath(
         'no.skatteetaten.aurora.gradle.plugins:aurora-gradle-plugin:1.2.1',
-        'org.springframework.cloud:spring-cloud-contract-gradle-plugin:2.0.0.RC1'
+        'org.springframework.cloud:spring-cloud-contract-gradle-plugin:2.0.1.RELEASE'
     )
   }
 }
 
 plugins {
-  id 'org.jetbrains.kotlin.jvm' version '1.2.41'
-  id 'org.jetbrains.kotlin.plugin.spring' version '1.2.41'
-  id 'org.springframework.boot' version '2.0.0.RELEASE'
-  id 'org.jlleitschuh.gradle.ktlint' version '4.0.0'
+    id "org.jetbrains.kotlin.jvm" version "1.2.71"
+    id "org.jetbrains.kotlin.plugin.spring" version "1.2.71"
+    id 'org.springframework.boot' version '2.0.4.RELEASE'
+    id 'org.jlleitschuh.gradle.ktlint' version '4.0.0'
 }
 
 ext.aurora = [
@@ -36,6 +39,7 @@ apply plugin: 'io.spring.dependency-management'
 apply plugin: 'no.skatteetaten.plugins.aurora'
 apply plugin: 'spring-cloud-contract'
 apply plugin: 'org.jlleitschuh.gradle.ktlint'
+apply plugin: "org.springframework.boot"
 
 repositories repos
 
@@ -47,7 +51,7 @@ group = 'no.skatteetaten.aurora'
 
 dependencyManagement {
   imports {
-    mavenBom "org.springframework.cloud:spring-cloud-contract-dependencies:2.0.0.RC1"
+    mavenBom "org.springframework.cloud:spring-cloud-contract-dependencies:2.0.1.RELEASE"
   }
 }
 

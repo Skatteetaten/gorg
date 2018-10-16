@@ -13,7 +13,7 @@ import org.springframework.security.web.authentication.www.BasicAuthenticationEn
 class ApplicationConfig : BeanPostProcessor {
 
     @Bean
-    fun client(): OpenShiftClient {
+    fun client(): DefaultOpenShiftClient {
         return DefaultOpenShiftClient()
     }
 

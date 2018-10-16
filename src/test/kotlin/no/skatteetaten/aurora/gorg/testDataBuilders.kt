@@ -7,7 +7,9 @@ import com.fkorotkov.openshift.newProject
 import com.fkorotkov.openshift.status
 import io.fabric8.openshift.api.model.DeploymentConfig
 import io.fabric8.openshift.api.model.Project
-import no.skatteetaten.aurora.gorg.service.CrawlService
+import no.skatteetaten.aurora.gorg.service.ApplicationService
+import no.skatteetaten.aurora.gorg.service.TemporaryApplication
+import no.skatteetaten.aurora.gorg.service.TemporaryProject
 import java.time.Duration
 import java.time.Instant
 
@@ -15,7 +17,7 @@ data class DeploymentConfigDataBuilder(
     val dcNamespace: String = "namespace",
     val dcKind: String = "Deployment",
     val dcName: String = "name",
-    val dcRemoveAfter: Instant = Instant.now().plusSeconds(60)
+    val dcTtl: Instant = Instant.now().plusSeconds(60)
 ) {
 
     fun build(): DeploymentConfig =
@@ -24,7 +26,7 @@ data class DeploymentConfigDataBuilder(
             metadata = newObjectMeta {
                 name = dcName
                 namespace = dcNamespace
-                labels = mapOf("removeAfter" to dcRemoveAfter.epochSecond.toString())
+                labels = mapOf("ttl" to dcTtl.epochSecond.toString())
             }
         }
 }
@@ -33,7 +35,7 @@ data class ProjectDataBuilder(
     val pName: String = "name",
     val pAffiliation: String = "affiliation",
     val pPhase: String = "phase",
-    val pRemoveAfter: Instant = Instant.now().plusSeconds(60)
+    val pTtl: Instant = Instant.now().plusSeconds(60)
 ) {
 
     fun build(): Project =
@@ -45,7 +47,7 @@ data class ProjectDataBuilder(
                 name = pName
                 labels = mapOf(
                     "affiliation" to pAffiliation,
-                    "removeAfter" to pRemoveAfter.epochSecond.toString()
+                    "ttl" to pTtl.epochSecond.toString()
                 )
             }
         }
@@ -56,8 +58,8 @@ data class TemporaryProjectDataBuilder(
     val affiliation: String = "affiliation"
 ) {
 
-    fun build(): CrawlService.TemporaryProject =
-        CrawlService.TemporaryProject(
+    fun build(): TemporaryProject =
+        TemporaryProject(
             name = name,
             affiliation = affiliation,
             ttl = Duration.ZERO,
@@ -70,8 +72,8 @@ data class TemporaryApplicationDataBuilder(
     val namespace: String = "namespace"
 ) {
 
-    fun build(): CrawlService.TemporaryApplication =
-        CrawlService.TemporaryApplication(
+    fun build(): TemporaryApplication =
+        TemporaryApplication(
             name = name,
             namespace = namespace,
             ttl = Duration.ZERO,
