@@ -16,6 +16,7 @@ class BuildService(val client: DefaultOpenShiftClient){
     fun findTemporaryBuilds(now: Instant): List<TemporaryBuild> {
 
         val builds = client.builds()
+            .inAnyNamespace()
             .withLabel(REMOVE_AFTER_LABEL)
             .list().items
 

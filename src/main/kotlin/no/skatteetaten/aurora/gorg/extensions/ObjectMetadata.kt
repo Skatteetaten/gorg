@@ -4,7 +4,7 @@ import io.fabric8.kubernetes.api.model.HasMetadata
 import java.lang.IllegalStateException
 import java.time.Instant
 
-const val REMOVE_AFTER_LABEL = "ttl"
+const val REMOVE_AFTER_LABEL = "removeAfter"
 const val TERMINATING_PHASE = "Terminating"
 
 fun ApplicationDeployment.removalTime(): Instant {

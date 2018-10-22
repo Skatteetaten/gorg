@@ -25,6 +25,7 @@ The component is named after Junior Gorg from the TV-show Fraggle Rock (http://m
  - refactor DeleteApplication to just Delete ApplicationDeployment object
  - create deleteBuild
  - oc adm policy add-cluster-role-to-user system:aurora:aurora-deleter $USER --as=system:admin
+ - oc login $DOCKERURL
  - Check if roles are correct for aurora-deleter
  
 ### TODO Boober

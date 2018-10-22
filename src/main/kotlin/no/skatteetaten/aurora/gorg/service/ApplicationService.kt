@@ -19,7 +19,6 @@ class ApplicationService(val client: DefaultOpenShiftClient) {
         val dcs = client.applicationDeploymentsTemporary()
 
 
-
         return dcs.map {
             val ttl = it.removalTime()?.let { it }
 
@@ -34,6 +33,8 @@ class ApplicationService(val client: DefaultOpenShiftClient) {
 
     fun deleteApplication(dc: TemporaryApplication): Boolean {
         logger.info("Found app to devour: ${dc.name}. time-to-live expired ${dc.removalTime}")
+
+      /*  client.deploymentConfigs().inNamespace(dc.namespace).withLabel("app", dc.name).delete() */
 
  /*       val lst = listOf(client.deploymentConfigs(),
             client.services(),

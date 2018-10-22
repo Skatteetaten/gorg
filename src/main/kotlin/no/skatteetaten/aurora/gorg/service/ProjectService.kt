@@ -1,7 +1,6 @@
 package no.skatteetaten.aurora.gorg.service
 
 import io.fabric8.openshift.client.DefaultOpenShiftClient
-import io.fabric8.openshift.client.OpenShiftClient
 import no.skatteetaten.aurora.gorg.extensions.REMOVE_AFTER_LABEL
 import no.skatteetaten.aurora.gorg.extensions.TERMINATING_PHASE
 import no.skatteetaten.aurora.gorg.extensions.removalTime
