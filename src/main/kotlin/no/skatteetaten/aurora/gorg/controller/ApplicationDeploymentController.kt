@@ -13,7 +13,7 @@ import java.time.Instant
 class ApplicationDeploymentController(val applicationDeploymentService: ApplicationDeploymentService) {
 
     @DeleteMapping
-    fun deleteApplications() {
+    fun deleteApplicationDeployments() {
         applicationDeploymentService.findTemporaryApplicationDeployments(Instant.now())
                 .filter { it.ttl.isNegative }
                 .forEach { applicationDeploymentService.deleteApplicationDeployment(it) }
