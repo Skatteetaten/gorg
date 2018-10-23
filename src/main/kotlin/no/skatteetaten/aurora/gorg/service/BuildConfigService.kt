@@ -11,7 +11,7 @@ import java.time.Instant
 
 @Service
 class BuildConfigService(val client: DefaultOpenShiftClient,
-    @Value("\${gorg.dryrun}") val dryrun: Boolean){
+    @Value("\${dryrun}") val dryrun: Boolean){
 
     val logger = LoggerFactory.getLogger(BuildConfigService::class.java)
 
