@@ -15,8 +15,8 @@ The component is named after Junior Gorg from the TV-show Fraggle Rock (http://m
 ## TODO:
  - get to work with icinga (?)
  - ApplicationDeployment deletion logging (-)
- - Write tests (-)
- - Decide how we get ttl to show. (Jenkins/buildConfigs/ApplicationDeployments/Projects) (-)
+ - Write tests / fix build (-)
+ - Implement ttl in scripts (Jenkins/buildConfigs/ApplicationDeployments/Projects) (-)
  - fix boober removeAfter -> ttl (-)
  - convert fra 6d til Duration: (-)
  https://docs.spring.io/spring-boot/docs/2.0.0.M5/api/org/springframework/boot/actuate/autoconfigure/metrics/export/StringToDurationConverter.html
@@ -31,5 +31,4 @@ The component is named after Junior Gorg from the TV-show Fraggle Rock (http://m
  - Build må fikses i v6 av pipeline script. Trenger ikke gjøre nå.
 
 ### CODE INFO
- - oc adm policy add-cluster-role-to-user system:aurora:aurora-deleter $USER --as=system:admin
  - oc login $DOCKERURL
