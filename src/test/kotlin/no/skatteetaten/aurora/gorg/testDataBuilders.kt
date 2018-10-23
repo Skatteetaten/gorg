@@ -7,8 +7,7 @@ import com.fkorotkov.openshift.newProject
 import com.fkorotkov.openshift.status
 import io.fabric8.openshift.api.model.DeploymentConfig
 import io.fabric8.openshift.api.model.Project
-import no.skatteetaten.aurora.gorg.service.ApplicationService
-import no.skatteetaten.aurora.gorg.service.TemporaryApplication
+import no.skatteetaten.aurora.gorg.service.TemporaryApplicationDeployment
 import no.skatteetaten.aurora.gorg.service.TemporaryProject
 import java.time.Duration
 import java.time.Instant
@@ -72,8 +71,8 @@ data class TemporaryApplicationDataBuilder(
     val namespace: String = "namespace"
 ) {
 
-    fun build(): TemporaryApplication =
-        TemporaryApplication(
+    fun build(): TemporaryApplicationDeployment =
+        TemporaryApplicationDeployment(
             name = name,
             namespace = namespace,
             ttl = Duration.ZERO,

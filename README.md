@@ -13,24 +13,23 @@ The component is named after Junior Gorg from the TV-show Fraggle Rock (http://m
 
 
 ## TODO:
- - fix boober removeAfter -> ttl
- - Use ApplicationDeployment object
- - get to work with icinga
- - sjekke avhengigeter
- - Mokey har kode for å jobbe med ApplicationDeployment
- - Må også hente builds med ttl
- - convert fra 6d til Duration: https://docs.spring.io/spring-boot/docs/2.0.0.M5/api/org/springframework/boot/actuate/autoconfigure/metrics/export/StringToDurationConverter.html
- - Tweeke algoritme for å finne ut om noe skal slettes
- - Temporary(Application|EnvBuild) må kunne listes ut, markere hvem som skulle vært slettet
- - refactor DeleteApplication to just Delete ApplicationDeployment object
- - create deleteBuild
- - oc adm policy add-cluster-role-to-user system:aurora:aurora-deleter $USER --as=system:admin
- - oc login $DOCKERURL
- - Check if roles are correct for aurora-deleter
+ - get to work with icinga (?)
+ - ApplicationDeployment deletion logging (-)
+ - Write tests (-)
+ - Decide how we get ttl to show. (Jenkins/buildConfigs/ApplicationDeployments/Projects) (-)
+ - fix boober removeAfter -> ttl (-)
+ - convert fra 6d til Duration: (-)
+ https://docs.spring.io/spring-boot/docs/2.0.0.M5/api/org/springframework/boot/actuate/autoconfigure/metrics/export/StringToDurationConverter.html
+ 
+ - Check if roles are correct for aurora-deleter (1/2)
  
 ### TODO Boober
- - removeAfter skal byttes ut med TTL. 
+ - removeAfter skal byttes ut med TTL. (-)
                  ?.let { StringToDurationConverter().convert(it) },
- - DeployMapper. Ikke lagre ttl eller env/ttl som Duration men som String
- - AuroraDeployEnvironment
+ - DeployMapper. Ikke lagre ttl eller env/ttl som Duration men som String (-)
+ - AuroraDeployEnvironment (?)
  - Build må fikses i v6 av pipeline script. Trenger ikke gjøre nå.
+
+### CODE INFO
+ - oc adm policy add-cluster-role-to-user system:aurora:aurora-deleter $USER --as=system:admin
+ - oc login $DOCKERURL
