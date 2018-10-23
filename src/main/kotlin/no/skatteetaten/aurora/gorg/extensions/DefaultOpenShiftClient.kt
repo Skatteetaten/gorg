@@ -9,13 +9,13 @@ import io.fabric8.openshift.client.DefaultOpenShiftClient
 import okhttp3.Request
 import okhttp3.Response
 
-fun DefaultOpenShiftClient.deleteApplicationDeployment(namespace:String, name:String): Response {
+fun DefaultOpenShiftClient.deleteApplicationDeployment(namespace:String, name:String): Boolean {
     val url =
         this.openshiftUrl.toURI().resolve("/apis/skatteetaten.no/v1/namespaces/$namespace/applicationdeployments/$name")
     return try {
         val request = Request.Builder().url(url.toString()).delete().build()
         val response = this.httpClient.newCall(request).execute()
-            response
+            response.isSuccessful
     } catch (e: Exception) {
         throw KubernetesClientException("Error occurred while fetching temporary application deployments", e)
     }

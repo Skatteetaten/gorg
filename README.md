@@ -16,6 +16,8 @@ The component is named after Junior Gorg from the TV-show Fraggle Rock (http://m
  - get to work with icinga (?)
  - ApplicationDeployment deletion logging (-)
  - Write tests / fix build (-)
+ - change http representation of ttl
+ - try catch delete services.
  - Implement ttl in scripts (Jenkins/buildConfigs/ApplicationDeployments/Projects) (-)
  - fix boober removeAfter -> ttl (-)
  - convert fra 6d til Duration: (-)

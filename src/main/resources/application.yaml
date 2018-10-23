@@ -30,8 +30,9 @@ spring:
 gorg:
     username: gorg
     password: gorg
+    delete:
+        resources: false
 
-dryrun: true
 
 logging:
     pattern:

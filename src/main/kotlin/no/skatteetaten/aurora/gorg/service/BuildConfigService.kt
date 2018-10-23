@@ -4,17 +4,19 @@ import io.fabric8.openshift.client.DefaultOpenShiftClient
 import no.skatteetaten.aurora.gorg.extensions.REMOVE_AFTER_LABEL
 import no.skatteetaten.aurora.gorg.extensions.removalTime
 import org.slf4j.LoggerFactory
-import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 import java.time.Duration
 import java.time.Instant
 
 @Service
-class BuildConfigService(val client: DefaultOpenShiftClient, @Value("\${dryrun}") val dryrun: Boolean){
+class BuildConfigService(
+    val client: DefaultOpenShiftClient,
+    val deleteService: DeleteService
+) {
 
     val logger = LoggerFactory.getLogger(BuildConfigService::class.java)
 
-    fun findTemporaryBuildConfigs(now: Instant): List<TemporaryBuildConfig> {
+    fun findTemporaryBuildConfigs(now: Instant): List<TemporaryResource> {
 
         val buildConfigs = client.buildConfigs()
             .inAnyNamespace()
@@ -23,30 +25,22 @@ class BuildConfigService(val client: DefaultOpenShiftClient, @Value("\${dryrun}"
 
         return buildConfigs.map {
             val removalTime = it.removalTime()
-            TemporaryBuildConfig(
-                it.metadata.name,
-                it.metadata.namespace,
-                Duration.between(now, removalTime),
-                removalTime)
-        }
 
+            TemporaryResource(
+                name = it.metadata.name,
+                namespace = "",
+                ttl = Duration.between(now, removalTime),
+                removalTime = removalTime,
+                resourceType = "buildConfig"
+            )
+        }
     }
 
-    fun deleteBuildConfig(buildConfig: TemporaryBuildConfig): Boolean {
-        logger.info("Found build to devour: ${buildConfig.name}. time-to-live expired ${buildConfig.removalTime}")
-
-        if (dryrun) {
-            logger.info("Dryrun = true. Build ${buildConfig.name} time-to-live expired. Will be deleted once dryrun flag is false")
-        } else {
-            return client.buildConfigs().inNamespace(buildConfig.namespace).withName(buildConfig.name).delete()
-                .also {
-                    if (it) {
-                        logger.info("Build ${buildConfig.name} gobbled, tastes like chicken!")
-                    } else {
-                        logger.error("Unable to delete project=${buildConfig.name}")
-                    }
-                }
+    fun deleteProject(project: TemporaryResource): Boolean {
+        return deleteService.deleteResource(project) {
+            client.buildConfigs().inNamespace(project.namespace).withName(project.name).delete()
         }
-        return true
     }
 }
+
+

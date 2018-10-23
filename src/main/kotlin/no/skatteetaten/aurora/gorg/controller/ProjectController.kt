@@ -2,6 +2,7 @@ package no.skatteetaten.aurora.gorg.controller
 
 import no.skatteetaten.aurora.gorg.service.ProjectService
 import no.skatteetaten.aurora.gorg.service.TemporaryProject
+import no.skatteetaten.aurora.gorg.service.TemporaryResource
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
@@ -20,7 +21,7 @@ class ProjectController(val projectService: ProjectService) {
     }
 
     @GetMapping
-    fun list(): List<TemporaryProject> {
+    fun list(): List<TemporaryResource> {
         return projectService.findTemporaryProjects(Instant.now())
     }
 }

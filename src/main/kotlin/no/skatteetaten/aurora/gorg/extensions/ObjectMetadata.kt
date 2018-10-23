@@ -10,13 +10,13 @@ const val TERMINATING_PHASE = "Terminating"
 fun ApplicationDeployment.removalTime(): Instant {
     return this.metadata.labels[REMOVE_AFTER_LABEL]?.let {
         Instant.ofEpochSecond(it.toLong())
-    } ?: throw IllegalStateException("ttl is not set or valid timstamp")
+    } ?: throw IllegalStateException("removeAfter is not set or valid timstamp")
 }
 
 
 fun HasMetadata.removalTime(): Instant {
     return this.metadata.labels[REMOVE_AFTER_LABEL]?.let {
         Instant.ofEpochSecond(it.toLong())
-    } ?: throw IllegalStateException("ttl is not set or valid timstamp")
+    } ?: throw IllegalStateException("removeAfter is not set or valid timstamp")
 }
 
