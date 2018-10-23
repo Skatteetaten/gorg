@@ -13,7 +13,7 @@ import java.time.Instant
 class BuildConfigController(val buildConfigService: BuildConfigService){
 
     @DeleteMapping
-    fun deleteProjects() {
+    fun deleteBuildConfigs() {
         buildConfigService.findTemporaryBuildConfigs(Instant.now())
             .filter { it.ttl.isNegative }
             .forEach { buildConfigService.deleteBuildConfig(it) }
