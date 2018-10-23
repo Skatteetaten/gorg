@@ -37,7 +37,7 @@ class BuildConfigService(val client: DefaultOpenShiftClient,
         logger.info("Found build to devour: ${buildConfig.name}. time-to-live expired ${buildConfig.removalTime}")
 
         if (dryrun) {
-            logger.info("Dryrun = true. Build ${buildConfig.name} time-to-live expired. Will be deleted once dryrun flagg is false")
+            logger.info("Dryrun = true. Build ${buildConfig.name} time-to-live expired. Will be deleted once dryrun flag is false")
         } else {
             return client.buildConfigs().inNamespace(buildConfig.namespace).withName(buildConfig.name).delete()
                 .also {
