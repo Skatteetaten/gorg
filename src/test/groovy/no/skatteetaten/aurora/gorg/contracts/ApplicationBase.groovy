@@ -1,11 +1,5 @@
 package no.skatteetaten.aurora.gorg.contracts
 
-import java.time.Duration
-import java.time.Instant
-
-import no.skatteetaten.aurora.gorg.controller.ApplicationController
-import no.skatteetaten.aurora.gorg.service.TemporaryApplication
-
 class ApplicationBase extends AbstractContractBase {
 
 /*  void setup() {
@@ -14,7 +8,7 @@ class ApplicationBase extends AbstractContractBase {
       findTemporaryApplications(_ as Instant) >> [createTemporaryApplication()]
     }
     def deleteService = Mock(DeleteService)
-    def controller = new ApplicationController(crawlService, deleteService)
+    def controller = new ApplicationDeploymentController(crawlService, deleteService)
     setupMockMvc(controller)
   }
 

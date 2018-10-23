@@ -10,7 +10,7 @@ import java.time.Instant
 
 @RestController
 @RequestMapping("/api/apps")
-class ApplicationController(val applicationDeploymentService: ApplicationDeploymentService) {
+class ApplicationDeploymentController(val applicationDeploymentService: ApplicationDeploymentService) {
 
     @DeleteMapping
     fun deleteApplications() {
