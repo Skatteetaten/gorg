@@ -31,6 +31,8 @@ gorg:
     username: gorg
     password: gorg
 
+dryrun: true
+
 logging:
     pattern:
       console: "%d [%-9.9thread] %highlight(%-5level) %cyan(%logger:%L) %X - %msg %n%rEx{full}"
