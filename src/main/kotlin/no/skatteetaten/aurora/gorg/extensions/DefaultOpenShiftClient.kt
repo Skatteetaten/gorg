@@ -7,7 +7,7 @@ import io.fabric8.kubernetes.api.model.ObjectMeta
 import io.fabric8.kubernetes.client.KubernetesClientException
 import io.fabric8.openshift.client.DefaultOpenShiftClient
 import okhttp3.Request
-import okhttp3.Response
+
 
 fun DefaultOpenShiftClient.deleteApplicationDeployment(namespace:String, name:String): Boolean {
     val url =

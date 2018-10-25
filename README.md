@@ -13,8 +13,8 @@ The component is named after Junior Gorg from the TV-show Fraggle Rock (http://m
 
 
 ## TODO:
- - get to work with icinga (?)
- - ApplicationDeployment deletion logging (-)
+ - get to work with icinga (?)(-)
+ - ApplicationDeployment deletion logging 
  - Write tests / fix build (-)
  - change http representation of ttl
  - try catch delete services.
