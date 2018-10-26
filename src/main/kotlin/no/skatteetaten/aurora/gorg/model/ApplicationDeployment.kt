@@ -38,5 +38,4 @@ data class ApplicationDeployment(
             Instant.ofEpochSecond(it.toLong())
         } ?: throw IllegalStateException("removeAfter is not set or valid timstamp")
     }
-
 }

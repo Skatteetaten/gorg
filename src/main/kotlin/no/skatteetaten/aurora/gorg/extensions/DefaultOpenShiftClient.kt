@@ -2,12 +2,10 @@ package no.skatteetaten.aurora.gorg.extensions
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import io.fabric8.kubernetes.client.KubernetesClientException
-import io.fabric8.kubernetes.client.dsl.base.OperationSupport.JSON
 import io.fabric8.openshift.client.DefaultOpenShiftClient
 import no.skatteetaten.aurora.gorg.model.ApplicationDeployment
 import no.skatteetaten.aurora.gorg.model.ApplicationDeploymentList
 import okhttp3.Request
-import okhttp3.RequestBody
 
 fun DefaultOpenShiftClient.deleteApplicationDeployment(namespace: String, name: String): Boolean {
     val url =
@@ -35,4 +33,3 @@ fun DefaultOpenShiftClient.applicationDeploymentsTemporary(): List<ApplicationDe
         throw KubernetesClientException("Error occurred while fetching temporary application deployments", e)
     }
 }
-

@@ -3,16 +3,13 @@ package no.skatteetaten.aurora.gorg
 import com.fkorotkov.kubernetes.newObjectMeta
 import com.fkorotkov.openshift.metadata
 import com.fkorotkov.openshift.newBuildConfig
-import com.fkorotkov.openshift.newDeploymentConfig
 import com.fkorotkov.openshift.newProject
 import com.fkorotkov.openshift.status
 import io.fabric8.openshift.api.model.BuildConfig
-import io.fabric8.openshift.api.model.DeploymentConfig
 import io.fabric8.openshift.api.model.Project
 import no.skatteetaten.aurora.gorg.extensions.REMOVE_AFTER_LABEL
 import no.skatteetaten.aurora.gorg.model.ApplicationDeployment
 import java.time.Instant
-
 
 data class BuildConfigDataBuilder(
     val bcNamespace: String = "namespace",
@@ -49,7 +46,6 @@ data class ApplicationDeploymentBuilder(
             }
         )
     }
-
 }
 
 data class ProjectDataBuilder(
@@ -71,4 +67,3 @@ data class ProjectDataBuilder(
             }
         }
 }
-

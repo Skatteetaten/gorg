@@ -5,12 +5,15 @@ import assertk.assertions.hasSize
 import assertk.assertions.isEqualTo
 import assertk.assertions.isGreaterThan
 import assertk.assertions.isNotNull
+import no.skatteetaten.aurora.gorg.ApplicationDeploymentBuilder
 import no.skatteetaten.aurora.gorg.BuildConfigDataBuilder
 import no.skatteetaten.aurora.gorg.ProjectDataBuilder
+import no.skatteetaten.aurora.gorg.extensions.execute
+import no.skatteetaten.aurora.gorg.model.ApplicationDeploymentList
 import org.junit.jupiter.api.Test
 import java.time.Instant
 
-class CrawlerTest : AbstractOpenShiftServerTest() {
+class CrawlServiceTest : AbstractOpenShiftServerTest() {
 
     @Test
     fun `Find temporary buildConfigs`() {
@@ -37,5 +40,23 @@ class CrawlerTest : AbstractOpenShiftServerTest() {
         assert(projects[0].name).isEqualTo("name")
         assert(projects[0].ttl.seconds).isGreaterThan(0)
         assert(projects[0].removalTime).isNotNull()
+    }
+
+    @Test
+    fun `Find temporary applicationDeployments`() {
+
+        val service = OpenShiftService(mockClient)
+
+        val ad = ApplicationDeploymentBuilder().build()
+        mockServer.execute(
+            ApplicationDeploymentList(items = listOf(ad))
+        ) {
+            val applications = service.findTemporaryApplicationDeployments(Instant.now())
+            assert(applications).hasSize(1)
+            assert(applications[0].name).isEqualTo("name")
+            assert(applications[0].namespace).isEqualTo("namespace")
+            assert(applications[0].ttl.seconds).isGreaterThan(0)
+            assert(applications[0].removalTime).isNotNull()
+        }
     }
 }

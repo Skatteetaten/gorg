@@ -5,7 +5,6 @@ import io.fabric8.openshift.client.DefaultOpenShiftClient
 import io.fabric8.openshift.client.OpenShiftClient
 import no.skatteetaten.aurora.gorg.extensions.deleteApplicationDeployment
 import no.skatteetaten.aurora.gorg.extensions.errorStackTraceIfDebug
-import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
@@ -43,14 +42,13 @@ class DeleteService(
         }
 
         return try {
-             deleteFunction(client)
-                .also {
-                    if (it) {
-                        logger.info("Resource=$item deleted successfully.")
-                    } else {
-                        logger.info("Resource=$item was not deleted.")
-                    }
+            deleteFunction(client).also {
+                if (it) {
+                    logger.info("Resource=$item deleted successfully.")
+                } else {
+                    logger.info("Resource=$item was not deleted.")
                 }
+            }
         } catch (e: KubernetesClientException) {
             logger.errorStackTraceIfDebug(
                 "Deletion of Resource=$item failed with exception=${e.code} message=${e.localizedMessage}",
@@ -60,4 +58,3 @@ class DeleteService(
         }
     }
 }
-
