@@ -5,12 +5,8 @@ import assertk.assertions.hasSize
 import assertk.assertions.isEqualTo
 import assertk.assertions.isGreaterThan
 import assertk.assertions.isNotNull
-import io.fabric8.openshift.client.DefaultOpenShiftClient
-import no.skatteetaten.aurora.gorg.ApplicationDeploymentBuilder
 import no.skatteetaten.aurora.gorg.BuildConfigDataBuilder
-
 import no.skatteetaten.aurora.gorg.ProjectDataBuilder
-import no.skatteetaten.aurora.gorg.extensions.createApplicationDeployment
 import org.junit.jupiter.api.Test
 import java.time.Instant
 
