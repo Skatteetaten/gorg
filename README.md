@@ -13,11 +13,9 @@ The component is named after Junior Gorg from the TV-show Fraggle Rock (http://m
  The component boober labels openshift/kuberneetes objects with the removeAfter label.
  Jenkins labels buildConfigs with removeAfter label. A project can configure ttl as an override in their Jenkinsfile.  
 
-
 ## TODO:
  - get to work with icinga (?)(-)
  - Write contract test 
- - Check if roles are correct for aurora-deleter (1/2)
  
 ### CODE INFO
  - oc login $DOCKERURL

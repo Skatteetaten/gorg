@@ -3,6 +3,8 @@ package no.skatteetaten.aurora.gorg.service
 import io.fabric8.kubernetes.client.KubernetesClientException
 import io.fabric8.openshift.client.DefaultOpenShiftClient
 import io.fabric8.openshift.client.OpenShiftClient
+import io.micrometer.core.instrument.MeterRegistry
+import io.micrometer.core.instrument.Tag
 import no.skatteetaten.aurora.gorg.extensions.deleteApplicationDeployment
 import no.skatteetaten.aurora.gorg.extensions.errorStackTraceIfDebug
 import org.slf4j.LoggerFactory
@@ -12,8 +14,13 @@ import org.springframework.stereotype.Service
 @Service
 class DeleteService(
     val client: OpenShiftClient,
+    val meterRegistry: MeterRegistry,
     @Value("\${gorg.delete.resources}") val deleteResources: Boolean
 ) {
+
+    companion object {
+        val METRICS_DELETED_RESOURCES = "gorg_deleted_resources"
+    }
 
     val logger = LoggerFactory.getLogger(DeleteService::class.java)
 
@@ -36,7 +43,7 @@ class DeleteService(
 
         if (!deleteResources) {
             logger.info(
-                "deleteResources = false. Resource=$item. Will be deleted once deleteResource flag is true"
+                "deleteResources=false. Resource=$item. Will be deleted once deleteResource flag is true"
             )
             return false
         }
@@ -44,6 +51,13 @@ class DeleteService(
         return try {
             deleteFunction(client).also {
                 if (it) {
+                    meterRegistry.counter(
+                        METRICS_DELETED_RESOURCES,
+                        listOf(
+                            Tag.of("resource", item.javaClass.name.replace("Resource", "")),
+                            Tag.of("success", "true")
+                        )
+                    ).increment()
                     logger.info("Resource=$item deleted successfully.")
                 } else {
                     logger.info("Resource=$item was not deleted.")
@@ -54,6 +68,13 @@ class DeleteService(
                 "Deletion of Resource=$item failed with exception=${e.code} message=${e.localizedMessage}",
                 e
             )
+            meterRegistry.counter(
+                METRICS_DELETED_RESOURCES,
+                listOf(
+                    Tag.of("resource", item.javaClass.name.replace("Resource", "")),
+                    Tag.of("success", "false")
+                )
+            ).increment()
             false
         }
     }
