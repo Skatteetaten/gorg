@@ -1,13 +1,11 @@
 package no.skatteetaten.aurora.gorg.extensions
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties
-import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import io.fabric8.kubernetes.api.model.ObjectMeta
 import io.fabric8.kubernetes.client.KubernetesClientException
 import io.fabric8.openshift.client.DefaultOpenShiftClient
+import no.skatteetaten.aurora.gorg.model.ApplicationDeployment
+import no.skatteetaten.aurora.gorg.model.ApplicationDeploymentList
 import okhttp3.Request
-
 
 fun DefaultOpenShiftClient.deleteApplicationDeployment(namespace:String, name:String): Boolean {
     val url =
@@ -37,17 +35,3 @@ fun DefaultOpenShiftClient.applicationDeploymentsTemporary(): List<ApplicationDe
     }
 }
 
-
-@JsonIgnoreProperties(ignoreUnknown = true)
-@JsonInclude(JsonInclude.Include.NON_NULL)
-data class ApplicationDeploymentList(
-    val items: List<ApplicationDeployment> = emptyList()
-)
-
-@JsonIgnoreProperties(ignoreUnknown = true)
-@JsonInclude(JsonInclude.Include.NON_NULL)
-data class ApplicationDeployment(
-    val kind: String = "ApplicationDeployment",
-    val metadata: ObjectMeta,
-    val apiVersion: String = "skatteetaten.no/v1"
-)

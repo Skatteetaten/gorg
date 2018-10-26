@@ -17,4 +17,5 @@ open class AbstractOpenShiftServerTest {
     fun tearDownOpenShiftServer() {
         openShiftServer.after()
     }
+
 }

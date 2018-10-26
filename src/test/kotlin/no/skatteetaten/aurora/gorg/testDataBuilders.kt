@@ -2,37 +2,58 @@ package no.skatteetaten.aurora.gorg
 
 import com.fkorotkov.kubernetes.newObjectMeta
 import com.fkorotkov.openshift.metadata
+import com.fkorotkov.openshift.newBuildConfig
 import com.fkorotkov.openshift.newDeploymentConfig
 import com.fkorotkov.openshift.newProject
 import com.fkorotkov.openshift.status
+import io.fabric8.openshift.api.model.BuildConfig
 import io.fabric8.openshift.api.model.DeploymentConfig
 import io.fabric8.openshift.api.model.Project
-import no.skatteetaten.aurora.gorg.service.TemporaryApplicationDeployment
-import no.skatteetaten.aurora.gorg.service.TemporaryProject
-import java.time.Duration
+import no.skatteetaten.aurora.gorg.extensions.REMOVE_AFTER_LABEL
+import no.skatteetaten.aurora.gorg.model.ApplicationDeployment
 import java.time.Instant
 
-data class DeploymentConfigDataBuilder(
-    val dcNamespace: String = "namespace",
-    val dcKind: String = "Deployment",
-    val dcName: String = "name",
-    val dcTtl: Instant = Instant.now().plusSeconds(60)
+
+data class BuildConfigDataBuilder(
+    val bcNamespace: String = "namespace",
+    val bcKind: String = "Deployment",
+    val bcName: String = "name",
+    val bcTtl: Instant = Instant.now().plusSeconds(60)
 ) {
 
-    fun build(): DeploymentConfig =
-        newDeploymentConfig {
-            kind = dcKind
+    fun build(): BuildConfig =
+        newBuildConfig {
+            kind = bcKind
             metadata = newObjectMeta {
-                name = dcName
-                namespace = dcNamespace
-                labels = mapOf("ttl" to dcTtl.epochSecond.toString())
+                name = bcName
+                namespace = bcNamespace
+                labels = mapOf(REMOVE_AFTER_LABEL to bcTtl.epochSecond.toString())
             }
         }
 }
 
+data class ApplicationDeploymentBuilder(
+    val adNamespace: String = "namespace",
+    val adKind: String = "ApplicationDeployment",
+    val adName: String = "name",
+    val adTtl: Instant = Instant.now().plusSeconds(60)
+) {
+
+    fun build(): ApplicationDeployment {
+        return ApplicationDeployment(
+            kind = adKind,
+            metadata = newObjectMeta {
+                name = adName
+                namespace = adNamespace
+                labels = mapOf(REMOVE_AFTER_LABEL to adTtl.epochSecond.toString())
+            }
+        )
+    }
+
+}
+
 data class ProjectDataBuilder(
     val pName: String = "name",
-    val pAffiliation: String = "affiliation",
     val pPhase: String = "phase",
     val pTtl: Instant = Instant.now().plusSeconds(60)
 ) {
@@ -45,37 +66,9 @@ data class ProjectDataBuilder(
             metadata {
                 name = pName
                 labels = mapOf(
-                    "affiliation" to pAffiliation,
-                    "ttl" to pTtl.epochSecond.toString()
+                    REMOVE_AFTER_LABEL to pTtl.epochSecond.toString()
                 )
             }
         }
 }
 
-data class TemporaryProjectDataBuilder(
-    val name: String = "name",
-    val affiliation: String = "affiliation"
-) {
-
-    fun build(): TemporaryProject =
-        TemporaryProject(
-            name = name,
-            affiliation = affiliation,
-            ttl = Duration.ZERO,
-            removalTime = Instant.now()
-        )
-}
-
-data class TemporaryApplicationDataBuilder(
-    val name: String = "name",
-    val namespace: String = "namespace"
-) {
-
-    fun build(): TemporaryApplicationDeployment =
-        TemporaryApplicationDeployment(
-            name = name,
-            namespace = namespace,
-            ttl = Duration.ZERO,
-            removalTime = Instant.now()
-        )
-}

@@ -2,41 +2,62 @@ package no.skatteetaten.aurora.gorg.service
 
 import io.fabric8.kubernetes.client.KubernetesClientException
 import io.fabric8.openshift.client.DefaultOpenShiftClient
+import io.fabric8.openshift.client.OpenShiftClient
+import no.skatteetaten.aurora.gorg.extensions.deleteApplicationDeployment
+import no.skatteetaten.aurora.gorg.extensions.errorStackTraceIfDebug
+import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 
 @Service
 class DeleteService(
+    val client: OpenShiftClient,
     @Value("\${gorg.delete.resources}") val deleteResources: Boolean
-    ) {
+) {
 
     val logger = LoggerFactory.getLogger(DeleteService::class.java)
 
-    fun deleteResource(client: DefaultOpenShiftClient, item: TemporaryResource, deleteFunction: (DefaultOpenShiftClient) -> Boolean): Boolean {
+    fun deleteApplicationDeployment(item: ApplicationDeploymentResource) = deleteResource(item) { client ->
+        (client as DefaultOpenShiftClient).deleteApplicationDeployment(item.namespace, item.name)
+    }
 
-        if (deleteResources) {
-            try {
-                return deleteFunction(client)
-                    .also { logger.info("deleteFunction boolean value: $it")
-                        if (it)
-                        {
-                            logger.info("Resource with name: ${item.name} and removalTime: ${item.removalTime} deleted successfully.")
-                        } else {
+    fun deleteProject(item: ProjectResource) = deleteResource(item) { client ->
+        client.projects().withName(item.name).delete()
+    }
 
-                        }
-                    }
+    fun deleteBuildConfig(item: BuildConfigResource) = deleteResource(item) { client ->
+        client.buildConfigs().inNamespace(item.namespace).withName(item.name).delete()
+    }
 
-            } catch (e: KubernetesClientException){
-                logger.error("Deletion of Resource with name : ${item.name} failed with exception : $e")
-            }
+    fun deleteResource(
+        item: BaseResource,
+        deleteFunction: (OpenShiftClient) -> Boolean
+    ): Boolean {
+
+        if (!deleteResources) {
+            logger.info(
+                "deleteResources = false. Resource=$item. Will be deleted once deleteResource flag is true"
+            )
             return false
         }
 
-        logger.info(
-            "deleteResources = false. Type ${item.resourceType} with name ${item.name} time-to-live expired. " +
-                "Will be deleted once dryrun flag is false"
-        )
-        return true
+        return try {
+             deleteFunction(client)
+                .also {
+                    if (it) {
+                        logger.info("Resource=$item deleted successfully.")
+                    } else {
+                        logger.info("Resource=$item was not deleted.")
+                    }
+                }
+        } catch (e: KubernetesClientException) {
+            logger.errorStackTraceIfDebug(
+                "Deletion of Resource=$item failed with exception=${e.code} message=${e.localizedMessage}",
+                e
+            )
+            false
+        }
     }
 }
+

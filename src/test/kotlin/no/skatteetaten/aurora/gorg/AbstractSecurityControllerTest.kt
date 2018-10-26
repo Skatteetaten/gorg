@@ -7,7 +7,8 @@ import org.springframework.test.web.servlet.MockMvc
 
 @ExtendWith(SpringExtension::class)
 open class AbstractSecurityControllerTest : AbstractTest() {
-
+/*
     @Autowired
     lateinit var mockMvc: MockMvc
+    */
 }

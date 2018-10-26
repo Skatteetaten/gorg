@@ -7,30 +7,18 @@ The service is currently under development
 The component is named after Junior Gorg from the TV-show Fraggle Rock (http://muppet.wikia.com/wiki/Junior_Gorg).
 
 ## How it works
- The component only removes resources that have the label "ttl".
- ttl is a durationString "6d", "2h", that is declared in aurora-config as the property "ttl" or "env/ttl"
- The component boober labels openshift/kuberneetes objects with the ttl label.  
+ The component only removes BuildConfigs/ApplicationDeployments/Projects that have the label "removeAfter".
+ removeAfter on Projects are calculated based on the human readable ttl durationString "env/ttl" in AuroraConfig
+ removeAfter on ApplicationDeployments are calculated based on the human readable ttl durationString "ttl" in AuroraConfig
+ The component boober labels openshift/kuberneetes objects with the removeAfter label.
+ Jenkins labels buildConfigs with removeAfter label. A project can configure ttl as an override in their Jenkinsfile.  
 
 
 ## TODO:
  - get to work with icinga (?)(-)
- - ApplicationDeployment deletion logging 
- - Write tests / fix build (-)
- - change http representation of ttl
- - try catch delete services.
- - Implement ttl in scripts (Jenkins/buildConfigs/ApplicationDeployments/Projects) (-)
- - fix boober removeAfter -> ttl (-)
- - convert fra 6d til Duration: (-)
- https://docs.spring.io/spring-boot/docs/2.0.0.M5/api/org/springframework/boot/actuate/autoconfigure/metrics/export/StringToDurationConverter.html
- 
+ - Write http tests
+ - Write contract test 
  - Check if roles are correct for aurora-deleter (1/2)
  
-### TODO Boober
- - removeAfter skal byttes ut med TTL. (-)
-                 ?.let { StringToDurationConverter().convert(it) },
- - DeployMapper. Ikke lagre ttl eller env/ttl som Duration men som String (-)
- - AuroraDeployEnvironment (?)
- - Build må fikses i v6 av pipeline script. Trenger ikke gjøre nå.
-
 ### CODE INFO
  - oc login $DOCKERURL

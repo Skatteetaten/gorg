@@ -1,10 +1,7 @@
 package no.skatteetaten.aurora.gorg.controller
 
-import io.fabric8.openshift.client.DefaultOpenShiftClient
-import no.skatteetaten.aurora.gorg.extensions.deleteApplicationDeployment
 import no.skatteetaten.aurora.gorg.service.DeleteService
 import no.skatteetaten.aurora.gorg.service.OpenShiftService
-import no.skatteetaten.aurora.gorg.service.TemporaryResource
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
@@ -15,8 +12,7 @@ import java.time.Instant
 @RequestMapping("/api")
 class CrawlController(
     val openShiftService: OpenShiftService,
-    val deleteService: DeleteService,
-    val client: DefaultOpenShiftClient
+    val deleteService: DeleteService
 ) {
 
     @GetMapping("/projects")
@@ -25,12 +21,7 @@ class CrawlController(
     @DeleteMapping("/projects")
     fun deleteProjects() = openShiftService.findTemporaryProjects(Instant.now())
         .filter { it.ttl.isNegative }
-        .forEach {
-            deleteService.deleteResource(client, it) {
-                client -> client.projects().withName(it.name).delete()
-            }
-
-        }
+        .forEach { deleteService.deleteProject(it) }
 
     @GetMapping("/buildConfigs")
     fun listBuildConfig() = openShiftService.findTemporaryBuildConfigs(Instant.now())
@@ -38,22 +29,14 @@ class CrawlController(
     @DeleteMapping("/buildConfigs")
     fun deleteBuildConfigs() = openShiftService.findTemporaryBuildConfigs(Instant.now())
         .filter { it.ttl.isNegative }
-        .forEach {
-            deleteService.deleteResource(client, it) { client ->
-                client.buildConfigs().inNamespace(it.namespace).withName(it.name).delete()
-            }
-        }
+        .forEach {deleteService.deleteBuildConfig(it)}
 
-    @GetMapping("/apps")
-    fun listApplicationDeployments(): List<TemporaryResource> = openShiftService.findTemporaryApplicationDeployments(Instant.now())
+    @GetMapping("/applicationDeployments")
+    fun listApplicationDeployments() = openShiftService.findTemporaryApplicationDeployments(Instant.now())
 
-    @DeleteMapping("/apps")
+    @DeleteMapping("/applicationDeployments")
     fun deleteApplicationDeployments() = openShiftService.findTemporaryApplicationDeployments(Instant.now())
         .filter { it.ttl.isNegative }
-        .forEach {
-            deleteService.deleteResource(client, it) {
-               client -> client.deleteApplicationDeployment(it.namespace, it.name)
-            }
-        }
+        .forEach { deleteService.deleteApplicationDeployment(it)}
 
 }
