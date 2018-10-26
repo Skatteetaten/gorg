@@ -45,21 +45,17 @@ class DeleteService(
             logger.info(
                 "deleteResources=false. Resource=$item. Will be deleted once deleteResource flag is true"
             )
+            count(item, "skipped")
             return false
         }
 
         return try {
             deleteFunction(client).also {
                 if (it) {
-                    meterRegistry.counter(
-                        METRICS_DELETED_RESOURCES,
-                        listOf(
-                            Tag.of("resource", item.javaClass.name.replace("Resource", "")),
-                            Tag.of("success", "true")
-                        )
-                    ).increment()
+                    count(item, "deleted")
                     logger.info("Resource=$item deleted successfully.")
                 } else {
+                    count(item, "error")
                     logger.info("Resource=$item was not deleted.")
                 }
             }
@@ -68,14 +64,18 @@ class DeleteService(
                 "Deletion of Resource=$item failed with exception=${e.code} message=${e.localizedMessage}",
                 e
             )
-            meterRegistry.counter(
-                METRICS_DELETED_RESOURCES,
-                listOf(
-                    Tag.of("resource", item.javaClass.name.replace("Resource", "")),
-                    Tag.of("success", "false")
-                )
-            ).increment()
+            count(item, "error")
             false
         }
+    }
+
+    private fun count(item: BaseResource, status: String) {
+        meterRegistry.counter(
+            METRICS_DELETED_RESOURCES,
+            listOf(
+                Tag.of("resource", item.javaClass.name.replace("Resource", "")),
+                Tag.of("status", status)
+            )
+        ).increment()
     }
 }
