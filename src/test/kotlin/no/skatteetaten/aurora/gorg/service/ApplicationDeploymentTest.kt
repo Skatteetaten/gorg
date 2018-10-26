@@ -45,7 +45,6 @@ class ApplicationDeploymentTest {
         ) {
             assert(deleteService.deleteApplicationDeployment(ad.toResource(Instant.now()))).isTrue()
         }
-
         assert(request.method).isEqualTo("DELETE")
         assert(request.path).isEqualTo("/apis/skatteetaten.no/v1/namespaces/${ad.metadata.namespace}/applicationdeployments/${ad.metadata.name}")
     }
