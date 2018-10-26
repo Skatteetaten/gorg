@@ -16,7 +16,6 @@ The component is named after Junior Gorg from the TV-show Fraggle Rock (http://m
 
 ## TODO:
  - get to work with icinga (?)(-)
- - Write http tests
  - Write contract test 
  - Check if roles are correct for aurora-deleter (1/2)
  
