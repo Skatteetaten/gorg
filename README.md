@@ -12,10 +12,3 @@ The component is named after Junior Gorg from the TV-show Fraggle Rock (http://m
  removeAfter on ApplicationDeployments are calculated based on the human readable ttl durationString "ttl" in AuroraConfig
  The component boober labels openshift/kuberneetes objects with the removeAfter label.
  Jenkins labels buildConfigs with removeAfter label. A project can configure ttl as an override in their Jenkinsfile.  
-
-## TODO:
- - get to work with icinga (?)(-)
- - Write contract test 
- 
-### CODE INFO
- - oc login $DOCKERURL
