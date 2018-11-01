@@ -71,7 +71,8 @@ dependencies {
       'io.fabric8:openshift-server-mock:3.1.8'
   )
   testImplementation(
-      "org.junit.jupiter:junit-jupiter-api"
+      "org.junit.jupiter:junit-jupiter-api",
+      "com.nhaarman:mockito-kotlin:1.6.0"
   )
   testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
 }
