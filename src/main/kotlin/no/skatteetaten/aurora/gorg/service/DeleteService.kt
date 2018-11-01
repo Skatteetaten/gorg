@@ -1,45 +1,81 @@
 package no.skatteetaten.aurora.gorg.service
 
+import io.fabric8.kubernetes.client.KubernetesClientException
+import io.fabric8.openshift.client.DefaultOpenShiftClient
 import io.fabric8.openshift.client.OpenShiftClient
-import org.slf4j.Logger
+import io.micrometer.core.instrument.MeterRegistry
+import io.micrometer.core.instrument.Tag
+import no.skatteetaten.aurora.gorg.extensions.deleteApplicationDeployment
+import no.skatteetaten.aurora.gorg.extensions.errorStackTraceIfDebug
 import org.slf4j.LoggerFactory
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 
 @Service
-class DeleteService(val client: OpenShiftClient) {
+class DeleteService(
+    val client: OpenShiftClient,
+    val meterRegistry: MeterRegistry,
+    @Value("\${gorg.delete.resources}") val deleteResources: Boolean
+) {
 
-    val logger: Logger = LoggerFactory.getLogger(DeleteService::class.java)
+    companion object {
+        val METRICS_DELETED_RESOURCES = "gorg_deleted_resources"
+    }
 
-    fun deleteProject(project: CrawlService.TemporaryProject): Boolean {
-        logger.info("Found project to devour: ${project.name}. time-to-live expired ${project.removalTime}")
-        return client.projects().withName(project.name).delete().also {
-            if (it) {
-                logger.info("Project ${project.name} gobbled, tastes like chicken!")
-            } else {
-                logger.error("Unable to delete project=${project.name}")
+    val logger = LoggerFactory.getLogger(DeleteService::class.java)
+
+    fun deleteApplicationDeployment(item: ApplicationDeploymentResource) = deleteResource(item) { client ->
+        (client as DefaultOpenShiftClient).deleteApplicationDeployment(item.namespace, item.name)
+    }
+
+    fun deleteProject(item: ProjectResource) = deleteResource(item) { client ->
+        client.projects().withName(item.name).delete()
+    }
+
+    fun deleteBuildConfig(item: BuildConfigResource) = deleteResource(item) { client ->
+        client.buildConfigs().inNamespace(item.namespace).withName(item.name).delete()
+    }
+
+    fun deleteResource(
+        item: BaseResource,
+        deleteFunction: (OpenShiftClient) -> Boolean
+    ): Boolean {
+
+        if (!deleteResources) {
+            logger.info(
+                "deleteResources=false. Resource=$item. Will be deleted once deleteResource flag is true"
+            )
+            count(item, "skipped")
+            return false
+        }
+
+        return try {
+            deleteFunction(client).also {
+                if (it) {
+                    count(item, "deleted")
+                    logger.info("Resource=$item deleted successfully.")
+                } else {
+                    count(item, "error")
+                    logger.info("Resource=$item was not deleted.")
+                }
             }
+        } catch (e: KubernetesClientException) {
+            logger.errorStackTraceIfDebug(
+                "Deletion of Resource=$item failed with exception=${e.code} message=${e.localizedMessage}",
+                e
+            )
+            count(item, "error")
+            false
         }
     }
 
-    fun deleteApplication(dc: CrawlService.TemporaryApplication): Boolean {
-        logger.info("Found app to devour: ${dc.name}. time-to-live expired ${dc.removalTime}")
-
-        val lst = listOf(client.deploymentConfigs(),
-                client.services(),
-                client.buildConfigs(),
-                client.configMaps(),
-                client.secrets(),
-                client.imageStreams(),
-                client.routes())
-
-        val deleted = lst.map {
-            it.inNamespace(dc.namespace).withLabel("app", dc.name).delete()
-        }
-
-        return deleted.all { it }.also {
-            if (!it) {
-                logger.error("Unable to delete application=${dc.name}")
-            }
-        }
+    private fun count(item: BaseResource, status: String) {
+        meterRegistry.counter(
+            METRICS_DELETED_RESOURCES,
+            listOf(
+                Tag.of("resource", item.javaClass.name.replace("Resource", "")),
+                Tag.of("status", status)
+            )
+        ).increment()
     }
 }
