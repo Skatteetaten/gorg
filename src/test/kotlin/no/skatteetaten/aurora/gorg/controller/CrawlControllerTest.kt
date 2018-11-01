@@ -1,6 +1,9 @@
 package no.skatteetaten.aurora.gorg.controller
 
 import com.nhaarman.mockito_kotlin.anyOrNull
+import com.nhaarman.mockito_kotlin.given
+import com.nhaarman.mockito_kotlin.then
+import com.nhaarman.mockito_kotlin.times
 import no.skatteetaten.aurora.gorg.ApplicationDeploymentResourceBuilder
 import no.skatteetaten.aurora.gorg.BuildConfigResourceBuilder
 import no.skatteetaten.aurora.gorg.ProjectResourceBuilder
@@ -8,7 +11,6 @@ import no.skatteetaten.aurora.gorg.service.DeleteService
 import no.skatteetaten.aurora.gorg.service.OpenShiftService
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
-import org.mockito.BDDMockito.*
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.boot.test.mock.mockito.MockBean

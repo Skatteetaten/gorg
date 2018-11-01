@@ -16,10 +16,10 @@ import java.time.Duration
 import java.time.Instant
 
 data class BuildConfigDataBuilder(
-        val bcNamespace: String = "namespace",
-        val bcKind: String = "Deployment",
-        val bcName: String = "name",
-        val bcTtl: Instant = Instant.now().plusSeconds(60)
+    val bcNamespace: String = "namespace",
+    val bcKind: String = "Deployment",
+    val bcName: String = "name",
+    val bcTtl: Instant = Instant.now().plusSeconds(60)
 ) {
 
     fun build(): BuildConfig =
@@ -34,10 +34,10 @@ data class BuildConfigDataBuilder(
 }
 
 data class ApplicationDeploymentBuilder(
-        val adNamespace: String = "namespace",
-        val adKind: String = "ApplicationDeployment",
-        val adName: String = "name",
-        val adTtl: Instant = Instant.now().plusSeconds(60)
+    val adNamespace: String = "namespace",
+    val adKind: String = "ApplicationDeployment",
+    val adName: String = "name",
+    val adTtl: Instant = Instant.now().plusSeconds(60)
 ) {
 
     fun build(): ApplicationDeployment {
@@ -53,9 +53,9 @@ data class ApplicationDeploymentBuilder(
 }
 
 data class ProjectDataBuilder(
-        val pName: String = "name",
-        val pPhase: String = "phase",
-        val pTtl: Instant = Instant.now().plusSeconds(60)
+    val pName: String = "name",
+    val pPhase: String = "phase",
+    val pTtl: Instant = Instant.now().plusSeconds(60)
 ) {
 
     fun build(): Project =
