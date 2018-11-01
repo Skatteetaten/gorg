@@ -14,21 +14,21 @@ class OpenShiftService(
     val client: OpenShiftClient
 ) {
 
-    fun findTemporaryProjects(now: Instant): List<ProjectResource> =
+    fun findTemporaryProjects(now: Instant = Instant.now()): List<ProjectResource> =
         client.projects()
             .withLabel(REMOVE_AFTER_LABEL)
             .list().items
             .filter { it.status.phase != TERMINATING_PHASE }
             .map { it.toResource(now) }
 
-    fun findTemporaryBuildConfigs(now: Instant): List<BuildConfigResource> =
+    fun findTemporaryBuildConfigs(now: Instant = Instant.now()): List<BuildConfigResource> =
         client.buildConfigs()
             .inAnyNamespace()
             .withLabel(REMOVE_AFTER_LABEL)
             .list().items
             .map { it.toResource(now) }
 
-    fun findTemporaryApplicationDeployments(now: Instant): List<ApplicationDeploymentResource> =
+    fun findTemporaryApplicationDeployments(now: Instant = Instant.now()): List<ApplicationDeploymentResource> =
         (client as DefaultOpenShiftClient).applicationDeploymentsTemporary()
             .map { it.toResource(now) }
 }
