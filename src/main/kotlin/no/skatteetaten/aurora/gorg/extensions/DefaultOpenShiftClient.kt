@@ -12,10 +12,15 @@ fun DefaultOpenShiftClient.deleteApplicationDeployment(namespace: String, name: 
         this.openshiftUrl.toURI().resolve("/apis/skatteetaten.no/v1/namespaces/$namespace/applicationdeployments/$name")
     return try {
         val request = Request.Builder().url(url.toString()).delete().build()
-        val response = this.httpClient.newCall(request).execute()
-        response.isSuccessful
+        this.httpClient.newCall(request).execute().use {
+            it.isSuccessful
+        }
+
     } catch (e: Exception) {
-        throw KubernetesClientException("Error occurred while fetching temporary application deployments", e)
+        throw KubernetesClientException(
+            "Error occurred while deleting temporary application deployment namespace=$namespace name=$name",
+            e
+        )
     }
 }
 
@@ -26,6 +31,7 @@ fun DefaultOpenShiftClient.applicationDeploymentsTemporary(): List<ApplicationDe
     return try {
         val request = Request.Builder().url(url.toString()).build()
         val response = this.httpClient.newCall(request).execute()
+
         jacksonObjectMapper().readValue(response.body()?.bytes(), ApplicationDeploymentList::class.java)
             ?.items
             ?: throw KubernetesClientException("Error occurred while fetching temporary application deployments")
