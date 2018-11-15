@@ -15,7 +15,6 @@ fun DefaultOpenShiftClient.deleteApplicationDeployment(namespace: String, name: 
         this.httpClient.newCall(request).execute().use {
             it.isSuccessful
         }
-
     } catch (e: Exception) {
         throw KubernetesClientException(
             "Error occurred while deleting temporary application deployment namespace=$namespace name=$name",
