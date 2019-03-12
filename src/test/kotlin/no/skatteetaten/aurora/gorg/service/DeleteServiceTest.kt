@@ -18,11 +18,12 @@ import java.time.Instant
 
 class DeleteServiceTest : AbstractOpenShiftServerTest() {
 
-    val meterRegsitry = SimpleMeterRegistry()
+    private val meterRegsitry = SimpleMeterRegistry()
 
-    val deleteService = DeleteService(mockClient, meterRegsitry, true)
+    private val deleteService = DeleteService(mockClient, meterRegsitry, true)
 
-    val root= RootPaths()
+    private val root= RootPaths()
+
     @Test
     fun `Delete existing project`() {
         val project = ProjectDataBuilder().build()
