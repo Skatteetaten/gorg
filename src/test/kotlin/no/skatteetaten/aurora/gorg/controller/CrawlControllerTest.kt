@@ -27,9 +27,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import java.time.Duration
 
 @ExtendWith(SpringExtension::class)
-@WebMvcTest(
-    ApplicationConfig::class
-)
+@WebMvcTest(secure=false)
 @WithUserDetails
 @DirtiesContext
 class CrawlControllerTest(@Autowired val mockMvc: MockMvc) {
