@@ -4,6 +4,7 @@ import assertk.assertThat
 import assertk.assertions.isEqualTo
 import assertk.assertions.isFalse
 import assertk.assertions.isTrue
+import io.fabric8.kubernetes.api.model.RootPaths
 import io.micrometer.core.instrument.simple.SimpleMeterRegistry
 import no.skatteetaten.aurora.gorg.ApplicationDeploymentBuilder
 import no.skatteetaten.aurora.gorg.BuildConfigDataBuilder
@@ -21,11 +22,12 @@ class DeleteServiceTest : AbstractOpenShiftServerTest() {
 
     val deleteService = DeleteService(mockClient, meterRegsitry, true)
 
+    val root= RootPaths()
     @Test
     fun `Delete existing project`() {
         val project = ProjectDataBuilder().build()
 
-        mockServer.execute(project) {
+        mockServer.execute(root, project) {
             val deleted = deleteService.deleteProject(project.toResource(Instant.now()))
             assertThat(deleted).isTrue()
             assertThat(
@@ -54,7 +56,7 @@ class DeleteServiceTest : AbstractOpenShiftServerTest() {
     @Test
     fun `Delete existing buildConfig`() {
         val buildConfig = BuildConfigDataBuilder().build()
-        mockServer.execute(buildConfig) {
+        mockServer.execute(root, buildConfig) {
             val deleted = deleteService.deleteBuildConfig(buildConfig.toResource(Instant.now()))
             assertThat(deleted).isTrue()
             assertThat(

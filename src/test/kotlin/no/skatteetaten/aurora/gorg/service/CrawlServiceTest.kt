@@ -5,6 +5,7 @@ import assertk.assertions.hasSize
 import assertk.assertions.isEqualTo
 import assertk.assertions.isGreaterThan
 import assertk.assertions.isNotNull
+import io.fabric8.kubernetes.api.model.RootPaths
 import io.fabric8.openshift.api.model.BuildConfigList
 import io.fabric8.openshift.api.model.ProjectList
 import no.skatteetaten.aurora.gorg.ApplicationDeploymentBuilder
@@ -17,7 +18,7 @@ import java.time.Instant
 
 class CrawlServiceTest : AbstractOpenShiftServerTest() {
 
-
+    val root=RootPaths()
     @Test
     fun `Find temporary buildConfigs`() {
 
@@ -25,7 +26,7 @@ class CrawlServiceTest : AbstractOpenShiftServerTest() {
         val list = BuildConfigList().apply {
             items = listOf(bc)
         }
-        mockServer.execute(list) {
+        mockServer.execute(root, list) {
             val service = OpenShiftService(mockClient)
             val applications = service.findTemporaryBuildConfigs(Instant.now())
             assertThat(applications).hasSize(1)
@@ -43,7 +44,7 @@ class CrawlServiceTest : AbstractOpenShiftServerTest() {
             items = listOf(project)
         }
 
-        mockServer.execute(list) {
+        mockServer.execute(root, list) {
             val service = OpenShiftService(mockClient)
             val projects = service.findTemporaryProjects(Instant.now())
             assertThat(projects).hasSize(1)
