@@ -10,19 +10,27 @@ import no.skatteetaten.aurora.gorg.ApplicationDeploymentBuilder
 import no.skatteetaten.aurora.gorg.BuildConfigDataBuilder
 import no.skatteetaten.aurora.gorg.ProjectDataBuilder
 import no.skatteetaten.aurora.gorg.extensions.execute
+import no.skatteetaten.aurora.gorg.extensions.executeWithStatus
 import no.skatteetaten.aurora.gorg.extensions.toResource
 import no.skatteetaten.aurora.gorg.service.DeleteService.Companion.METRICS_DELETED_RESOURCES
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.time.Duration
 import java.time.Instant
 
 class DeleteServiceTest : AbstractOpenShiftServerTest() {
 
-    val meterRegsitry = SimpleMeterRegistry()
+    private val meterRegsitry = SimpleMeterRegistry()
 
-    val deleteService = DeleteService(mockClient, meterRegsitry, true)
+    private lateinit var deleteService: DeleteService
 
-    val root= RootPaths()
+    private val root = RootPaths()
+
+    @BeforeEach
+    fun setUp() {
+        deleteService = DeleteService(mockClient, meterRegsitry, true)
+    }
+
     @Test
     fun `Delete existing project`() {
         val project = ProjectDataBuilder().build()
@@ -43,44 +51,49 @@ class DeleteServiceTest : AbstractOpenShiftServerTest() {
 
     @Test
     fun `Return not deleted for non-existing project`() {
-        val deleted = deleteService.deleteProject(
-            ProjectResource(
-                name = "non-existing-name",
-                ttl = Duration.ZERO,
-                removalTime = Instant.now()
+        mockServer.executeWithStatus(
+            200 to root,
+            404 to false
+        ) {
+            val deleted = deleteService.deleteProject(
+                ProjectResource(
+                    name = "non-existing-name",
+                    ttl = Duration.ZERO,
+                    removalTime = Instant.now()
+                )
             )
-        )
-        assertThat(deleted).isFalse()
+            assertThat(deleted).isFalse()
+        }
     }
 
     @Test
     fun `Delete existing buildConfig`() {
         val buildConfig = BuildConfigDataBuilder().build()
-        mockServer.execute(root, buildConfig) {
+        mockServer.execute(root, buildConfig, buildConfig) {
             val deleted = deleteService.deleteBuildConfig(buildConfig.toResource(Instant.now()))
+            val deletedMetrics = meterRegsitry.find(METRICS_DELETED_RESOURCES)
+                .tag("status", "deleted").counter()?.count()
             assertThat(deleted).isTrue()
-            assertThat(
-                meterRegsitry.find(METRICS_DELETED_RESOURCES).tag(
-                    "status",
-                    "deleted"
-                ).counter()?.count()
-            ).isEqualTo(
-                1.0
-            )
+            assertThat(deletedMetrics).isEqualTo(1.0)
         }
     }
 
     @Test
     fun `Return not deleted for non-existing buildConfig`() {
-        val deleted = deleteService.deleteBuildConfig(
-            BuildConfigResource(
-                name = "non-existing-name",
-                ttl = Duration.ZERO,
-                namespace = "namespace",
-                removalTime = Instant.now()
+        mockServer.executeWithStatus(
+            200 to root,
+            404 to false
+        ) {
+            val deleted = deleteService.deleteBuildConfig(
+                BuildConfigResource(
+                    name = "non-existing-name",
+                    ttl = Duration.ZERO,
+                    namespace = "namespace",
+                    removalTime = Instant.now()
+                )
             )
-        )
-        assertThat(deleted).isFalse()
+            assertThat(deleted).isFalse()
+        }
     }
 
     @Test
@@ -122,8 +135,9 @@ class DeleteServiceTest : AbstractOpenShiftServerTest() {
 
     @Test
     fun `return skipped if deleteResource is false`() {
+        val service = DeleteService(mockClient, meterRegsitry, false)
         val buildConfig = BuildConfigDataBuilder().build()
-        val deleted = deleteService.deleteBuildConfig(buildConfig.toResource(Instant.now()))
+        val deleted = service.deleteBuildConfig(buildConfig.toResource(Instant.now()))
         assertThat(deleted).isFalse()
         assertThat(meterRegsitry.find(METRICS_DELETED_RESOURCES).tag("status", "skipped").counter()?.count()).isEqualTo(
             1.0
