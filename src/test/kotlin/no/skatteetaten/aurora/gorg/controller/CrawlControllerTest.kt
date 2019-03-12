@@ -28,7 +28,6 @@ import java.time.Duration
 
 @ExtendWith(SpringExtension::class)
 @WebMvcTest(secure=false)
-@WithUserDetails
 @DirtiesContext
 class CrawlControllerTest(@Autowired val mockMvc: MockMvc) {
 
