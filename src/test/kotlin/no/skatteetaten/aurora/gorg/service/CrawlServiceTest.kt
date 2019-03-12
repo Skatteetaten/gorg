@@ -18,7 +18,7 @@ import java.time.Instant
 
 class CrawlServiceTest : AbstractOpenShiftServerTest() {
 
-    val root=RootPaths()
+    val root = RootPaths()
     @Test
     fun `Find temporary buildConfigs`() {
 
