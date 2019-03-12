@@ -4,6 +4,7 @@ import com.nhaarman.mockito_kotlin.anyOrNull
 import com.nhaarman.mockito_kotlin.given
 import com.nhaarman.mockito_kotlin.then
 import com.nhaarman.mockito_kotlin.times
+import no.skatteetaten.aurora.gorg.ApplicationConfig
 import no.skatteetaten.aurora.gorg.ApplicationDeploymentResourceBuilder
 import no.skatteetaten.aurora.gorg.BuildConfigResourceBuilder
 import no.skatteetaten.aurora.gorg.ProjectResourceBuilder
@@ -26,7 +27,9 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import java.time.Duration
 
 @ExtendWith(SpringExtension::class)
-@WebMvcTest
+@WebMvcTest(
+    ApplicationConfig::class
+)
 @WithUserDetails
 @DirtiesContext
 class CrawlControllerTest(@Autowired val mockMvc: MockMvc) {
