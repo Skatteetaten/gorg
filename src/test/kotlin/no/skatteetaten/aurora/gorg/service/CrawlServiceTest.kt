@@ -17,7 +17,6 @@ import java.time.Instant
 
 class CrawlServiceTest : AbstractOpenShiftServerTest() {
 
-    val service = OpenShiftService(mockClient)
 
     @Test
     fun `Find temporary buildConfigs`() {
@@ -27,6 +26,7 @@ class CrawlServiceTest : AbstractOpenShiftServerTest() {
             items = listOf(bc)
         }
         mockServer.execute(list) {
+            val service = OpenShiftService(mockClient)
             val applications = service.findTemporaryBuildConfigs(Instant.now())
             assertThat(applications).hasSize(1)
             assertThat(applications[0].name).isEqualTo("name")
@@ -44,6 +44,7 @@ class CrawlServiceTest : AbstractOpenShiftServerTest() {
         }
 
         mockServer.execute(list) {
+            val service = OpenShiftService(mockClient)
             val projects = service.findTemporaryProjects(Instant.now())
             assertThat(projects).hasSize(1)
             assertThat(projects[0].name).isEqualTo("name")
@@ -57,6 +58,7 @@ class CrawlServiceTest : AbstractOpenShiftServerTest() {
 
         val ad = ApplicationDeploymentBuilder().build()
         mockServer.execute(ApplicationDeploymentList(items = listOf(ad))) {
+            val service = OpenShiftService(mockClient)
             val applications = service.findTemporaryApplicationDeployments(Instant.now())
             assertThat(applications).hasSize(1)
             assertThat(applications[0].name).isEqualTo("name")
