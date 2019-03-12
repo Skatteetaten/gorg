@@ -1,6 +1,6 @@
 package no.skatteetaten.aurora.gorg.service
 
-import assertk.assert
+import assertk.assertThat
 import assertk.assertions.isEqualTo
 import assertk.assertions.isFalse
 import assertk.assertions.isTrue
@@ -19,20 +19,28 @@ class DeleteServiceTest : AbstractOpenShiftServerTest() {
 
     val meterRegsitry = SimpleMeterRegistry()
 
+    val deleteService = DeleteService(mockClient, meterRegsitry, true)
+
     @Test
     fun `Delete existing project`() {
         val project = ProjectDataBuilder().build()
-        openShiftServer.openshiftClient.inNamespace("namespace").projects().create(project)
 
-        val deleteService = DeleteService(openShiftServer.openshiftClient, meterRegsitry, true)
-        val deleted = deleteService.deleteProject(project.toResource(Instant.now()))
-        assert(deleted).isTrue()
-        assert(meterRegsitry.find(METRICS_DELETED_RESOURCES).tag("status", "deleted").counter()?.count()).isEqualTo(1.0)
+        mockServer.execute(project) {
+            val deleted = deleteService.deleteProject(project.toResource(Instant.now()))
+            assertThat(deleted).isTrue()
+            assertThat(
+                meterRegsitry.find(METRICS_DELETED_RESOURCES).tag(
+                    "status",
+                    "deleted"
+                ).counter()?.count()
+            ).isEqualTo(
+                1.0
+            )
+        }
     }
 
     @Test
     fun `Return not deleted for non-existing project`() {
-        val deleteService = DeleteService(openShiftServer.openshiftClient, meterRegsitry, true)
         val deleted = deleteService.deleteProject(
             ProjectResource(
                 name = "non-existing-name",
@@ -40,23 +48,28 @@ class DeleteServiceTest : AbstractOpenShiftServerTest() {
                 removalTime = Instant.now()
             )
         )
-        assert(deleted).isFalse()
+        assertThat(deleted).isFalse()
     }
 
     @Test
     fun `Delete existing buildConfig`() {
         val buildConfig = BuildConfigDataBuilder().build()
-        openShiftServer.openshiftClient.inNamespace("namespace").buildConfigs().create(buildConfig)
-
-        val deleteService = DeleteService(openShiftServer.openshiftClient, meterRegsitry, true)
-        val deleted = deleteService.deleteBuildConfig(buildConfig.toResource(Instant.now()))
-        assert(deleted).isTrue()
-        assert(meterRegsitry.find(METRICS_DELETED_RESOURCES).tag("status", "deleted").counter()?.count()).isEqualTo(1.0)
+        mockServer.execute(buildConfig) {
+            val deleted = deleteService.deleteBuildConfig(buildConfig.toResource(Instant.now()))
+            assertThat(deleted).isTrue()
+            assertThat(
+                meterRegsitry.find(METRICS_DELETED_RESOURCES).tag(
+                    "status",
+                    "deleted"
+                ).counter()?.count()
+            ).isEqualTo(
+                1.0
+            )
+        }
     }
 
     @Test
     fun `Return not deleted for non-existing buildConfig`() {
-        val deleteService = DeleteService(openShiftServer.openshiftClient, meterRegsitry, true)
         val deleted = deleteService.deleteBuildConfig(
             BuildConfigResource(
                 name = "non-existing-name",
@@ -65,21 +78,22 @@ class DeleteServiceTest : AbstractOpenShiftServerTest() {
                 removalTime = Instant.now()
             )
         )
-        assert(deleted).isFalse()
+        assertThat(deleted).isFalse()
     }
 
     @Test
     fun `delete expired applicationDeployments`() {
-        val deleteService = DeleteService(mockClient, meterRegsitry, true)
         val ad = ApplicationDeploymentBuilder().build()
         val request = mockServer.execute(
             true
         ) {
-            assert(deleteService.deleteApplicationDeployment(ad.toResource(Instant.now()))).isTrue()
+            assertThat(deleteService.deleteApplicationDeployment(ad.toResource(Instant.now()))).isTrue()
         }
-        assert(request.method).isEqualTo("DELETE")
-        assert(request.path).isEqualTo("/apis/skatteetaten.no/v1/namespaces/${ad.metadata.namespace}/applicationdeployments/${ad.metadata.name}")
-        assert(meterRegsitry.find(METRICS_DELETED_RESOURCES).tag("status", "deleted").counter()?.count()).isEqualTo(1.0)
+        assertThat(request.method).isEqualTo("DELETE")
+        assertThat(request.path).isEqualTo("/apis/skatteetaten.no/v1/namespaces/${ad.metadata.namespace}/applicationdeployments/${ad.metadata.name}")
+        assertThat(meterRegsitry.find(METRICS_DELETED_RESOURCES).tag("status", "deleted").counter()?.count()).isEqualTo(
+            1.0
+        )
     }
 
     @Test
@@ -88,7 +102,7 @@ class DeleteServiceTest : AbstractOpenShiftServerTest() {
         mockServer.execute(
             404, false
         ) {
-            assert(
+            assertThat(
                 deleteService.deleteApplicationDeployment(
                     ApplicationDeploymentResource(
                         name = "non-existing-name",
@@ -99,17 +113,18 @@ class DeleteServiceTest : AbstractOpenShiftServerTest() {
                 )
             ).isFalse()
         }
-        assert(meterRegsitry.find(METRICS_DELETED_RESOURCES).tag("status", "error").counter()?.count()).isEqualTo(1.0)
+        assertThat(meterRegsitry.find(METRICS_DELETED_RESOURCES).tag("status", "error").counter()?.count()).isEqualTo(
+            1.0
+        )
     }
 
     @Test
     fun `return skipped if deleteResource is false`() {
         val buildConfig = BuildConfigDataBuilder().build()
-        openShiftServer.openshiftClient.inNamespace("namespace").buildConfigs().create(buildConfig)
-
-        val deleteService = DeleteService(openShiftServer.openshiftClient, meterRegsitry, false)
         val deleted = deleteService.deleteBuildConfig(buildConfig.toResource(Instant.now()))
-        assert(deleted).isFalse()
-        assert(meterRegsitry.find(METRICS_DELETED_RESOURCES).tag("status", "skipped").counter()?.count()).isEqualTo(1.0)
+        assertThat(deleted).isFalse()
+        assertThat(meterRegsitry.find(METRICS_DELETED_RESOURCES).tag("status", "skipped").counter()?.count()).isEqualTo(
+            1.0
+        )
     }
 }
