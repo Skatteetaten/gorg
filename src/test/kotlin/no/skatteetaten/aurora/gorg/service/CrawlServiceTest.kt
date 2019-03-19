@@ -11,15 +11,14 @@ import io.fabric8.openshift.api.model.ProjectList
 import no.skatteetaten.aurora.gorg.ApplicationDeploymentBuilder
 import no.skatteetaten.aurora.gorg.BuildConfigDataBuilder
 import no.skatteetaten.aurora.gorg.ProjectDataBuilder
+import no.skatteetaten.aurora.gorg.extensions.execute
 import no.skatteetaten.aurora.gorg.model.ApplicationDeploymentList
-import no.skatteetaten.aurora.mockmvc.extensions.mockwebserver.execute
 import org.junit.jupiter.api.Test
 import java.time.Instant
 
 class CrawlServiceTest : AbstractOpenShiftServerTest() {
 
-    private val root = RootPaths()
-
+    val root = RootPaths()
     @Test
     fun `Find temporary buildConfigs`() {
 
