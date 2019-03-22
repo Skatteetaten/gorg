@@ -98,8 +98,8 @@ class DeleteServiceTest : AbstractOpenShiftServerTest() {
             assertThat(deleted).isTrue()
             assertThat(deletedCount).isEqualTo(1.0)
         }
-        assertThat(request.method).isEqualTo("DELETE")
-        assertThat(request.path).isEqualTo("/apis/skatteetaten.no/v1/namespaces/${ad.metadata.namespace}/applicationdeployments/${ad.metadata.name}")
+        assertThat(request.first().method).isEqualTo("DELETE")
+        assertThat(request.first().path).isEqualTo("/apis/skatteetaten.no/v1/namespaces/${ad.metadata.namespace}/applicationdeployments/${ad.metadata.name}")
     }
 
     @Test
