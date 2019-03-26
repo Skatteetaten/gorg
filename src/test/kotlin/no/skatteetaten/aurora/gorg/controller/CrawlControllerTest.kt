@@ -9,24 +9,26 @@ import no.skatteetaten.aurora.gorg.BuildConfigResourceBuilder
 import no.skatteetaten.aurora.gorg.ProjectResourceBuilder
 import no.skatteetaten.aurora.gorg.service.DeleteService
 import no.skatteetaten.aurora.gorg.service.OpenShiftService
+import no.skatteetaten.aurora.mockmvc.extensions.Path
+import no.skatteetaten.aurora.mockmvc.extensions.delete
+import no.skatteetaten.aurora.mockmvc.extensions.get
+import no.skatteetaten.aurora.mockmvc.extensions.responseJsonPath
+import no.skatteetaten.aurora.mockmvc.extensions.statusIsOk
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.boot.test.mock.mockito.MockBean
-import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf
 import org.springframework.test.annotation.DirtiesContext
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.springframework.test.web.servlet.MockMvc
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import java.time.Duration
 
 @ExtendWith(SpringExtension::class)
 @WebMvcTest(secure = false)
 @DirtiesContext
+@AutoConfigureRestDocs
 class CrawlControllerTest(@Autowired val mockMvc: MockMvc) {
 
     @MockBean
@@ -40,9 +42,9 @@ class CrawlControllerTest(@Autowired val mockMvc: MockMvc) {
         given(openShiftService.findTemporaryProjects(anyOrNull()))
             .willReturn(listOf(ProjectResourceBuilder().build()))
 
-        mockMvc.perform(get("/api/projects"))
-            .andExpect(status().isOk)
-            .andExpect(jsonPath("\$[0].name").value("name"))
+        mockMvc.get(Path("/api/projects")) {
+            statusIsOk().responseJsonPath("$[0].name").equalsValue("name")
+        }
     }
 
     @Test
@@ -55,8 +57,9 @@ class CrawlControllerTest(@Autowired val mockMvc: MockMvc) {
                 )
             )
 
-        mockMvc.perform(delete("/api/projects").with(csrf()))
-            .andExpect(status().isOk)
+        mockMvc.delete(Path("/api/projects")) {
+            statusIsOk()
+        }
         then(deleteService).should(times(1)).deleteProject(anyOrNull())
     }
 
@@ -65,9 +68,9 @@ class CrawlControllerTest(@Autowired val mockMvc: MockMvc) {
         given(openShiftService.findTemporaryBuildConfigs(anyOrNull()))
             .willReturn(listOf(BuildConfigResourceBuilder().build()))
 
-        mockMvc.perform(get("/api/buildConfigs"))
-            .andExpect(status().isOk)
-            .andExpect(jsonPath("\$[0].name").value("name"))
+        mockMvc.get(Path("/api/buildConfigs")) {
+            statusIsOk().responseJsonPath("$[0].name").equalsValue("name")
+        }
     }
 
     @Test
@@ -80,8 +83,9 @@ class CrawlControllerTest(@Autowired val mockMvc: MockMvc) {
                 )
             )
 
-        mockMvc.perform(delete("/api/buildConfigs").with(csrf()))
-            .andExpect(status().isOk)
+        mockMvc.delete(Path("/api/buildConfigs")) {
+            statusIsOk()
+        }
         then(deleteService).should(times(1)).deleteBuildConfig(anyOrNull())
     }
 
@@ -90,9 +94,9 @@ class CrawlControllerTest(@Autowired val mockMvc: MockMvc) {
         given(openShiftService.findTemporaryApplicationDeployments(anyOrNull()))
             .willReturn(listOf(ApplicationDeploymentResourceBuilder().build()))
 
-        mockMvc.perform(get("/api/applicationDeployments"))
-            .andExpect(status().isOk)
-            .andExpect(jsonPath("\$[0].name").value("name"))
+        mockMvc.get(Path("/api/applicationDeployments")) {
+            statusIsOk().responseJsonPath("$[0].name").equalsValue("name")
+        }
     }
 
     @Test
@@ -105,8 +109,9 @@ class CrawlControllerTest(@Autowired val mockMvc: MockMvc) {
                 )
             )
 
-        mockMvc.perform(delete("/api/applicationDeployments").with(csrf()))
-            .andExpect(status().isOk)
+        mockMvc.delete(Path("/api/applicationDeployments")) {
+            statusIsOk()
+        }
         then(deleteService).should(times(1)).deleteApplicationDeployment(anyOrNull())
     }
 }
