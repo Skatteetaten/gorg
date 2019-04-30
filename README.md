@@ -6,6 +6,21 @@ The service is currently under development
 
 The component is named after Junior Gorg from the TV-show Fraggle Rock (http://muppet.wikia.com/wiki/Junior_Gorg).
 
+ ## Setup
+ 
+ In order to use this project you must set repositories in your `~/.gradle/init.gradle` file
+ 
+     allprojects {
+         ext.repos= {
+             mavenCentral()
+             jcenter()
+         }
+         repositories repos
+         buildscript {
+          repositories repos
+         }
+     }
+
 ## How it works
  The component only removes BuildConfigs/ApplicationDeployments/Projects that have the label "removeAfter".
  removeAfter on Projects are calculated based on the human readable ttl durationString "env/ttl" in AuroraConfig
