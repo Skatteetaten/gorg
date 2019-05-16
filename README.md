@@ -21,6 +21,12 @@ The component is named after Junior Gorg from the TV-show Fraggle Rock (http://m
          }
      }
 
+We use a local repository for distributionUrl in our gradle-wrapper.properties, you need to change it to a public repo in order to use the gradlew command. `../gradle/wrapper/gradle-wrapper.properties`
+
+    <...>
+    distributionUrl=https\://services.gradle.org/distributions/gradle-<version>-bin.zip
+    <...>
+
 ## How it works
  The component only removes BuildConfigs/ApplicationDeployments/Projects that have the label "removeAfter".
  removeAfter on Projects are calculated based on the human readable ttl durationString "env/ttl" in AuroraConfig
