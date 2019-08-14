@@ -14,9 +14,9 @@ plugins {
 }
 
 dependencies {
-    implementation("io.fabric8:openshift-client:4.1.3")
-    testImplementation("com.fkorotkov:kubernetes-dsl:2.0.1")
-    testImplementation("com.squareup.okhttp3:mockwebserver:4.0.1")
+    implementation("io.fabric8:openshift-client:4.4.1")
+    testImplementation("com.fkorotkov:kubernetes-dsl:2.1")
+    testImplementation("com.squareup.okhttp3:mockwebserver:4.1.0")
 
     implementation("org.springframework.boot:spring-boot-starter-security")
     implementation("org.springframework.boot:spring-boot-starter-web")
