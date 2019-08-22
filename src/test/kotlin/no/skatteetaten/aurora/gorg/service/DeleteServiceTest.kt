@@ -19,7 +19,7 @@ import java.time.Instant
 
 class DeleteServiceTest : AbstractOpenShiftServerTest() {
 
-    private val meterRegsitry = SimpleMeterRegistry()
+    private val meterRegistry = SimpleMeterRegistry()
 
     private lateinit var deleteService: DeleteService
 
@@ -27,16 +27,15 @@ class DeleteServiceTest : AbstractOpenShiftServerTest() {
 
     @BeforeEach
     fun setUp() {
-        deleteService = DeleteService(mockClient, meterRegsitry, true)
+        deleteService = DeleteService(mockClient, meterRegistry, true)
     }
 
     @Test
     fun `Delete existing project`() {
         val project = ProjectDataBuilder().build()
-
-        mockServer.execute(root, project) {
+        mockServer.execute(project) {
             val deleted = deleteService.deleteProject(project.toResource(Instant.now()))
-            val deletedCount = meterRegsitry.deletedResourcesCount("status", "deleted")
+            val deletedCount = meterRegistry.deletedResourcesCount("status", "deleted")
 
             assertThat(deleted).isTrue()
             assertThat(deletedCount).isEqualTo(1.0)
@@ -46,7 +45,6 @@ class DeleteServiceTest : AbstractOpenShiftServerTest() {
     @Test
     fun `Return not deleted for non-existing project`() {
         mockServer.execute(
-            200 to root,
             404 to false
         ) {
             val deleted = deleteService.deleteProject(
@@ -60,9 +58,9 @@ class DeleteServiceTest : AbstractOpenShiftServerTest() {
     @Test
     fun `Delete existing buildConfig`() {
         val buildConfig = BuildConfigDataBuilder().build()
-        mockServer.execute(root, buildConfig, buildConfig) {
+        mockServer.execute(buildConfig) {
             val deleted = deleteService.deleteBuildConfig(buildConfig.toResource(Instant.now()))
-            val deletedMetrics = meterRegsitry.deletedResourcesCount("status", "deleted")
+            val deletedMetrics = meterRegistry.deletedResourcesCount("status", "deleted")
 
             assertThat(deleted).isTrue()
             assertThat(deletedMetrics).isEqualTo(1.0)
@@ -72,7 +70,6 @@ class DeleteServiceTest : AbstractOpenShiftServerTest() {
     @Test
     fun `Return not deleted for non-existing buildConfig`() {
         mockServer.execute(
-            200 to root,
             404 to false
         ) {
             val deleted = deleteService.deleteBuildConfig(
@@ -93,18 +90,18 @@ class DeleteServiceTest : AbstractOpenShiftServerTest() {
         val ad = ApplicationDeploymentBuilder().build()
         val request = mockServer.execute(true) {
             val deleted = deleteService.deleteApplicationDeployment(ad.toResource(Instant.now()))
-            val deletedCount = meterRegsitry.deletedResourcesCount("status", "deleted")
+            val deletedCount = meterRegistry.deletedResourcesCount("status", "deleted")
 
             assertThat(deleted).isTrue()
             assertThat(deletedCount).isEqualTo(1.0)
         }
-        assertThat(request.first().method).isEqualTo("DELETE")
-        assertThat(request.first().path).isEqualTo("/apis/skatteetaten.no/v1/namespaces/${ad.metadata.namespace}/applicationdeployments/${ad.metadata.name}")
+        assertThat(request.first()?.method).isEqualTo("DELETE")
+        assertThat(request.first()?.path).isEqualTo("/apis/skatteetaten.no/v1/namespaces/${ad.metadata.namespace}/applicationdeployments/${ad.metadata.name}")
     }
 
     @Test
     fun `return not deleted for non-existing applicationDeployments`() {
-        val deleteService = DeleteService(mockClient, meterRegsitry, true)
+        val deleteService = DeleteService(mockClient, meterRegistry, true)
         mockServer.execute(404 to false) {
             val deleted = deleteService.deleteApplicationDeployment(
                 ApplicationDeploymentResource(
@@ -114,7 +111,7 @@ class DeleteServiceTest : AbstractOpenShiftServerTest() {
                     removalTime = Instant.now()
                 )
             )
-            val deletedCount = meterRegsitry.deletedResourcesCount("status", "error")
+            val deletedCount = meterRegistry.deletedResourcesCount("status", "error")
 
             assertThat(deleted).isFalse()
             assertThat(deletedCount).isEqualTo(1.0)
@@ -123,10 +120,10 @@ class DeleteServiceTest : AbstractOpenShiftServerTest() {
 
     @Test
     fun `return skipped if deleteResource is false`() {
-        val service = DeleteService(mockClient, meterRegsitry, false)
+        val service = DeleteService(mockClient, meterRegistry, false)
         val buildConfig = BuildConfigDataBuilder().build()
         val deleted = service.deleteBuildConfig(buildConfig.toResource(Instant.now()))
-        val deletedCount = meterRegsitry.deletedResourcesCount("status", "skipped")
+        val deletedCount = meterRegistry.deletedResourcesCount("status", "skipped")
 
         assertThat(deleted).isFalse()
         assertThat(deletedCount).isEqualTo(1.0)

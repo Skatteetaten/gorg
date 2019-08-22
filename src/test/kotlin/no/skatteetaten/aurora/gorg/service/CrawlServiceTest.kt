@@ -45,7 +45,7 @@ class CrawlServiceTest : AbstractOpenShiftServerTest() {
             items = listOf(project)
         }
 
-        mockServer.execute(root, list) {
+        mockServer.execute(list) {
             val service = OpenShiftService(mockClient)
             val projects = service.findTemporaryProjects(Instant.now())
             assertThat(projects).hasSize(1)
