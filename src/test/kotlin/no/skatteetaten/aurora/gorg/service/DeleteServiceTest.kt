@@ -33,8 +33,7 @@ class DeleteServiceTest : AbstractOpenShiftServerTest() {
     @Test
     fun `Delete existing project`() {
         val project = ProjectDataBuilder().build()
-
-        mockServer.execute(root, project) {
+        mockServer.execute(project) {
             val deleted = deleteService.deleteProject(project.toResource(Instant.now()))
             val deletedCount = meterRegistry.deletedResourcesCount("status", "deleted")
 
@@ -46,7 +45,6 @@ class DeleteServiceTest : AbstractOpenShiftServerTest() {
     @Test
     fun `Return not deleted for non-existing project`() {
         mockServer.execute(
-            200 to root,
             404 to false
         ) {
             val deleted = deleteService.deleteProject(
@@ -60,7 +58,7 @@ class DeleteServiceTest : AbstractOpenShiftServerTest() {
     @Test
     fun `Delete existing buildConfig`() {
         val buildConfig = BuildConfigDataBuilder().build()
-        mockServer.execute(root, buildConfig, buildConfig) {
+        mockServer.execute(buildConfig) {
             val deleted = deleteService.deleteBuildConfig(buildConfig.toResource(Instant.now()))
             val deletedMetrics = meterRegistry.deletedResourcesCount("status", "deleted")
 
@@ -72,7 +70,6 @@ class DeleteServiceTest : AbstractOpenShiftServerTest() {
     @Test
     fun `Return not deleted for non-existing buildConfig`() {
         mockServer.execute(
-            200 to root,
             404 to false
         ) {
             val deleted = deleteService.deleteBuildConfig(
@@ -98,8 +95,8 @@ class DeleteServiceTest : AbstractOpenShiftServerTest() {
             assertThat(deleted).isTrue()
             assertThat(deletedCount).isEqualTo(1.0)
         }
-        assertThat(request.first().method).isEqualTo("DELETE")
-        assertThat(request.first().path).isEqualTo("/apis/skatteetaten.no/v1/namespaces/${ad.metadata.namespace}/applicationdeployments/${ad.metadata.name}")
+        assertThat(request.first()?.method).isEqualTo("DELETE")
+        assertThat(request.first()?.path).isEqualTo("/apis/skatteetaten.no/v1/namespaces/${ad.metadata.namespace}/applicationdeployments/${ad.metadata.name}")
     }
 
     @Test
