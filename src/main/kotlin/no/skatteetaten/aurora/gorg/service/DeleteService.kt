@@ -5,11 +5,13 @@ import io.fabric8.openshift.client.DefaultOpenShiftClient
 import io.fabric8.openshift.client.OpenShiftClient
 import io.micrometer.core.instrument.MeterRegistry
 import io.micrometer.core.instrument.Tag
+import mu.KotlinLogging
 import no.skatteetaten.aurora.gorg.extensions.deleteApplicationDeployment
 import no.skatteetaten.aurora.gorg.extensions.errorStackTraceIfDebug
-import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
+
+private val logger = KotlinLogging.logger {}
 
 @Service
 class DeleteService(
@@ -21,9 +23,7 @@ class DeleteService(
     companion object {
         val METRICS_DELETED_RESOURCES = "gorg_deleted_resources"
     }
-
-    val logger = LoggerFactory.getLogger(DeleteService::class.java)
-
+    
     fun deleteApplicationDeployment(item: ApplicationDeploymentResource) = deleteResource(item) { client ->
         (client as DefaultOpenShiftClient).deleteApplicationDeployment(item.namespace, item.name)
     }
