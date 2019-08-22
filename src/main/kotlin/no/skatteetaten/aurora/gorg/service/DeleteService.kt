@@ -23,7 +23,7 @@ class DeleteService(
     companion object {
         val METRICS_DELETED_RESOURCES = "gorg_deleted_resources"
     }
-    
+
     fun deleteApplicationDeployment(item: ApplicationDeploymentResource) = deleteResource(item) { client ->
         (client as DefaultOpenShiftClient).deleteApplicationDeployment(item.namespace, item.name)
     }
