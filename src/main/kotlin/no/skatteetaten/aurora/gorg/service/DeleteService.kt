@@ -33,7 +33,11 @@ class DeleteService(
     }
 
     fun deleteBuildConfig(item: BuildConfigResource) = deleteResource(item) { client ->
-        client.buildConfigs().inNamespace(item.namespace).withName(item.name).delete()
+        client.buildConfigs()
+            .inNamespace(item.namespace)
+            .withName(item.name)
+            .withPropagationPolicy("Background")
+            .delete()
     }
 
     fun deleteResource(
