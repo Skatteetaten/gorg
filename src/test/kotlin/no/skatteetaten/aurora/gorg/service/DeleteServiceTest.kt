@@ -6,6 +6,8 @@ import assertk.assertions.isFalse
 import assertk.assertions.isTrue
 import io.fabric8.kubernetes.api.model.RootPaths
 import io.micrometer.core.instrument.simple.SimpleMeterRegistry
+import java.time.Duration
+import java.time.Instant
 import no.skatteetaten.aurora.gorg.ApplicationDeploymentBuilder
 import no.skatteetaten.aurora.gorg.BuildConfigDataBuilder
 import no.skatteetaten.aurora.gorg.ProjectDataBuilder
@@ -14,8 +16,6 @@ import no.skatteetaten.aurora.gorg.service.DeleteService.Companion.METRICS_DELET
 import no.skatteetaten.aurora.mockmvc.extensions.mockwebserver.execute
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import java.time.Duration
-import java.time.Instant
 
 class DeleteServiceTest : AbstractOpenShiftServerTest() {
 
