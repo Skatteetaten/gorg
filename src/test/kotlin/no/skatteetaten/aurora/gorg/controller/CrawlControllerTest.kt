@@ -4,6 +4,7 @@ import com.nhaarman.mockito_kotlin.anyOrNull
 import com.nhaarman.mockito_kotlin.given
 import com.nhaarman.mockito_kotlin.then
 import com.nhaarman.mockito_kotlin.times
+import java.time.Duration
 import no.skatteetaten.aurora.gorg.ApplicationDeploymentResourceBuilder
 import no.skatteetaten.aurora.gorg.BuildConfigResourceBuilder
 import no.skatteetaten.aurora.gorg.ProjectResourceBuilder
@@ -23,7 +24,6 @@ import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.test.annotation.DirtiesContext
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.springframework.test.web.servlet.MockMvc
-import java.time.Duration
 
 @ExtendWith(SpringExtension::class)
 @WebMvcTest(secure = false)

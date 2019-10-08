@@ -1,23 +1,23 @@
 plugins {
     id("org.jetbrains.kotlin.jvm") version "1.3.50"
     id("org.jetbrains.kotlin.plugin.spring") version "1.3.50"
-    id("org.jlleitschuh.gradle.ktlint") version "8.2.0"
-    id("org.sonarqube") version "2.7.1"
-    id("org.springframework.boot") version "2.1.8.RELEASE"
+    id("org.jlleitschuh.gradle.ktlint") version "9.0.0"
+    id("org.sonarqube") version "2.8"
+    id("org.springframework.boot") version "2.1.9.RELEASE"
     id("org.asciidoctor.convert") version "2.3.0"
 
-    id("com.gorylenko.gradle-git-properties") version "2.1.0"
+    id("com.gorylenko.gradle-git-properties") version "2.2.0"
     id("com.github.ben-manes.versions") version "0.25.0"
     id("se.patrikerdes.use-latest-versions") version "0.2.12"
 
-    id("no.skatteetaten.gradle.aurora") version "2.4.2"
+    id("no.skatteetaten.gradle.aurora") version "3.1.0"
 }
 
-extra["jackson-bom.version"] = "2.10.0.pr3"
+extra["jackson-bom.version"] = "2.10.0"
 
 dependencies {
-    implementation("io.fabric8:openshift-client:4.5.1")
-    testImplementation("com.fkorotkov:kubernetes-dsl:2.2")
+    implementation("io.fabric8:openshift-client:4.6.0")
+    testImplementation("com.fkorotkov:kubernetes-dsl:3.0")
 
     implementation("org.springframework.boot:spring-boot-starter-security")
     implementation("org.springframework.boot:spring-boot-starter-web")

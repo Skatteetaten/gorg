@@ -7,13 +7,13 @@ import com.fkorotkov.openshift.newProject
 import com.fkorotkov.openshift.status
 import io.fabric8.openshift.api.model.BuildConfig
 import io.fabric8.openshift.api.model.Project
+import java.time.Duration
+import java.time.Instant
 import no.skatteetaten.aurora.gorg.extensions.REMOVE_AFTER_LABEL
 import no.skatteetaten.aurora.gorg.model.ApplicationDeployment
 import no.skatteetaten.aurora.gorg.service.ApplicationDeploymentResource
 import no.skatteetaten.aurora.gorg.service.BuildConfigResource
 import no.skatteetaten.aurora.gorg.service.ProjectResource
-import java.time.Duration
-import java.time.Instant
 
 data class BuildConfigDataBuilder(
     val bcNamespace: String = "namespace",

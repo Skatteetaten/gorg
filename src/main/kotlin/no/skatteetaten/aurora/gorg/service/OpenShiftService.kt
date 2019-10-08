@@ -2,12 +2,12 @@ package no.skatteetaten.aurora.gorg.service
 
 import io.fabric8.openshift.client.DefaultOpenShiftClient
 import io.fabric8.openshift.client.OpenShiftClient
+import java.time.Instant
 import no.skatteetaten.aurora.gorg.extensions.REMOVE_AFTER_LABEL
 import no.skatteetaten.aurora.gorg.extensions.TERMINATING_PHASE
 import no.skatteetaten.aurora.gorg.extensions.applicationDeploymentsTemporary
 import no.skatteetaten.aurora.gorg.extensions.toResource
 import org.springframework.stereotype.Service
-import java.time.Instant
 
 @Service
 class OpenShiftService(

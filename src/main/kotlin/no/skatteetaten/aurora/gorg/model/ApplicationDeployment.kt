@@ -3,10 +3,10 @@ package no.skatteetaten.aurora.gorg.model
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonInclude
 import io.fabric8.kubernetes.api.model.ObjectMeta
-import no.skatteetaten.aurora.gorg.extensions.REMOVE_AFTER_LABEL
-import no.skatteetaten.aurora.gorg.service.ApplicationDeploymentResource
 import java.time.Duration
 import java.time.Instant
+import no.skatteetaten.aurora.gorg.extensions.REMOVE_AFTER_LABEL
+import no.skatteetaten.aurora.gorg.service.ApplicationDeploymentResource
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
