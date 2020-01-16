@@ -22,6 +22,12 @@ gorg:
     delete:
         resources: false
 
+management:
+    metrics:
+        distribution:
+            sla:
+                openshift_client_api_request: 10ms, 25ms, 50ms, 100ms, 500ms, 1s, 5s
+                openshift_http_api_request: 10ms, 25ms, 50ms, 100ms, 500ms, 1s, 5s
 
 logging:
     pattern:
