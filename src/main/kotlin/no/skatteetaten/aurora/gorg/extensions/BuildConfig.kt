@@ -11,6 +11,7 @@ fun BuildConfig.toResource(now: Instant): BuildConfigResource {
     return BuildConfigResource(
         name = this.metadata.name,
         namespace = this.metadata.namespace,
+        affiliation = this.metadata.labels["affiliation"]?.let { it }.toString(),
         ttl = Duration.between(now, removalTime),
         removalTime = removalTime
     )

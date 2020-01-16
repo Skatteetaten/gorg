@@ -28,6 +28,7 @@ data class ApplicationDeployment(
         return ApplicationDeploymentResource(
             name = this.metadata.name,
             namespace = this.metadata.namespace,
+            affiliation = this.metadata.labels["affiliation"]?.let { it }.toString(),
             ttl = Duration.between(now, removalTime),
             removalTime = removalTime
         )
