@@ -10,7 +10,6 @@ import no.skatteetaten.aurora.gorg.extensions.deleteApplicationDeployment
 import no.skatteetaten.aurora.gorg.extensions.errorStackTraceIfDebug
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
-import java.util.concurrent.TimeUnit
 
 private val logger = KotlinLogging.logger {}
 
@@ -25,39 +24,20 @@ class DeleteService(
         val METRICS_DELETED_RESOURCES = "gorg_deleted_resources"
     }
 
-    fun deleteApplicationDeployment(item: ApplicationDeploymentResource) {
-        val start = System.currentTimeMillis()
-
-        deleteResource(item) { client ->
-            (client as DefaultOpenShiftClient).deleteApplicationDeployment(item.namespace, item.name)
-        }
-        meterRegistry.timer("openshift_api_request", listOf( Tag.of("client","http")))
-            .record(System.currentTimeMillis() - start, TimeUnit.MILLISECONDS)
+    fun deleteApplicationDeployment(item: ApplicationDeploymentResource) = deleteResource(item) { client ->
+        (client as DefaultOpenShiftClient).deleteApplicationDeployment(item.namespace, item.name)
     }
 
-    fun deleteProject(item: ProjectResource) {
-        val start = System.currentTimeMillis()
-
-        deleteResource(item) { client ->
-            client.projects().withName(item.name).delete()
-        }
-        meterRegistry.timer("openshift_api_request", listOf(Tag.of("client","OpenShiftClient")))
-            .record(System.currentTimeMillis() - start, TimeUnit.MILLISECONDS)
+    fun deleteProject(item: ProjectResource) = deleteResource(item) { client ->
+        client.projects().withName(item.name).delete()
     }
 
-    fun deleteBuildConfig(item: BuildConfigResource) {
-        val start = System.currentTimeMillis()
-
-        deleteResource(item) { client ->
-            client.buildConfigs()
-                .inNamespace(item.namespace)
-                .withName(item.name)
-                .withPropagationPolicy("Background")
-                .delete()
-        }
-
-        meterRegistry.timer("openshift_api_request", listOf(Tag.of("client","OpenShiftClient")))
-            .record(System.currentTimeMillis() - start, TimeUnit.MILLISECONDS)
+    fun deleteBuildConfig(item: BuildConfigResource) = deleteResource(item) { client ->
+        client.buildConfigs()
+            .inNamespace(item.namespace)
+            .withName(item.name)
+            .withPropagationPolicy("Background")
+            .delete()
     }
 
     fun deleteResource(
