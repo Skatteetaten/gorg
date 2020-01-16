@@ -28,7 +28,7 @@ data class BuildConfigResource(
 
 data class ProjectResource(
     override val name: String,
-    override val ttl: Duration,
     override val affiliation: String,
+    override val ttl: Duration,
     override val removalTime: Instant
 ) : BaseResource

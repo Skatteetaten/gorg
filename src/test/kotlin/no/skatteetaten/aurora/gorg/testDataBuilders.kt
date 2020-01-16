@@ -74,17 +74,17 @@ data class ProjectDataBuilder(
 
 data class ProjectResourceBuilder(val ttl: Duration = Duration.ofSeconds(100)) {
     fun build() =
-            ProjectResource("name", ttl, Instant.now().plusSeconds(100))
+            ProjectResource("name", "affiliation",ttl, Instant.now().plusSeconds(100))
 }
 
 data class BuildConfigResourceBuilder(val ttl: Duration = Duration.ofSeconds(100)) {
 
     fun build() =
-            BuildConfigResource("name", "namespace", ttl, Instant.now().plusSeconds(100))
+            BuildConfigResource("name", "namespace","affiliation", ttl, Instant.now().plusSeconds(100))
 }
 
 data class ApplicationDeploymentResourceBuilder(val ttl: Duration = Duration.ofSeconds(100)) {
 
     fun build() =
-            ApplicationDeploymentResource("name", "namespace", ttl, Instant.now().plusSeconds(100))
+            ApplicationDeploymentResource("name", "namespace","affiliation", ttl, Instant.now().plusSeconds(100))
 }

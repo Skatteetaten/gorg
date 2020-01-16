@@ -48,7 +48,9 @@ class DeleteServiceTest : AbstractOpenShiftServerTest() {
             404 to false
         ) {
             val deleted = deleteService.deleteProject(
-                ProjectResource(name = "non-existing-name", ttl = Duration.ZERO, removalTime = Instant.now())
+                ProjectResource(
+                    name = "non-existing-name",
+                    affiliation = "non-existing-affiliation", ttl = Duration.ZERO, removalTime = Instant.now())
             )
 
             assertThat(deleted).isFalse()
@@ -75,6 +77,7 @@ class DeleteServiceTest : AbstractOpenShiftServerTest() {
             val deleted = deleteService.deleteBuildConfig(
                 BuildConfigResource(
                     name = "non-existing-name",
+                    affiliation = "non-existing-affiliation",
                     ttl = Duration.ZERO,
                     namespace = "namespace",
                     removalTime = Instant.now()
@@ -106,6 +109,7 @@ class DeleteServiceTest : AbstractOpenShiftServerTest() {
             val deleted = deleteService.deleteApplicationDeployment(
                 ApplicationDeploymentResource(
                     name = "non-existing-name",
+                    affiliation = "non-existing-affiliation",
                     ttl = Duration.ZERO,
                     namespace = "namespace",
                     removalTime = Instant.now()
