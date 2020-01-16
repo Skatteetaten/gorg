@@ -3,6 +3,7 @@ package no.skatteetaten.aurora.gorg.service
 import io.fabric8.openshift.client.DefaultOpenShiftClient
 import io.fabric8.openshift.client.OpenShiftClient
 import io.micrometer.core.instrument.MeterRegistry
+import io.micrometer.core.instrument.Tag
 import no.skatteetaten.aurora.gorg.extensions.REMOVE_AFTER_LABEL
 import no.skatteetaten.aurora.gorg.extensions.TERMINATING_PHASE
 import no.skatteetaten.aurora.gorg.extensions.applicationDeploymentsTemporary
@@ -26,7 +27,7 @@ class OpenShiftService(
             .filter { it.status.phase != TERMINATING_PHASE }
             .map { it.toResource(now) }
 
-        meterRegistry.timer("openshift_client_api_request", listOf()).record(System.currentTimeMillis() - start, TimeUnit.MILLISECONDS)
+        meterRegistry.timer("openshift_api_request", listOf(Tag.of("client","OpenShiftClient"))).record(System.currentTimeMillis() - start, TimeUnit.MILLISECONDS)
 
         return projectResources
     }
@@ -40,7 +41,7 @@ class OpenShiftService(
             .list().items
             .map { it.toResource(now) }
 
-        meterRegistry.timer("openshift_client_api_request", listOf()).record(System.currentTimeMillis() - start, TimeUnit.MILLISECONDS)
+        meterRegistry.timer("openshift_api_request", listOf(Tag.of("client","OpenShiftClient"))).record(System.currentTimeMillis() - start, TimeUnit.MILLISECONDS)
 
         return buildConfigs
     }
@@ -51,7 +52,7 @@ class OpenShiftService(
        val applicationDeployments = (client as DefaultOpenShiftClient).applicationDeploymentsTemporary()
             .map { it.toResource(now) }
 
-        meterRegistry.timer("openshift_http_api_request", listOf()).record(System.currentTimeMillis() - start, TimeUnit.MILLISECONDS)
+        meterRegistry.timer("openshift_api_request", listOf(Tag.of("client","http"))).record(System.currentTimeMillis() - start, TimeUnit.MILLISECONDS)
 
         return applicationDeployments
     }

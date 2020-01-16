@@ -31,7 +31,7 @@ class DeleteService(
         deleteResource(item) { client ->
             (client as DefaultOpenShiftClient).deleteApplicationDeployment(item.namespace, item.name)
         }
-        meterRegistry.timer("openshift_http_api_request", listOf())
+        meterRegistry.timer("openshift_api_request", listOf( Tag.of("client","http")))
             .record(System.currentTimeMillis() - start, TimeUnit.MILLISECONDS)
     }
 
@@ -41,7 +41,7 @@ class DeleteService(
         deleteResource(item) { client ->
             client.projects().withName(item.name).delete()
         }
-        meterRegistry.timer("openshift_client_api_request", listOf())
+        meterRegistry.timer("openshift_api_request", listOf(Tag.of("client","OpenShiftClient")))
             .record(System.currentTimeMillis() - start, TimeUnit.MILLISECONDS)
     }
 
@@ -56,7 +56,7 @@ class DeleteService(
                 .delete()
         }
 
-        meterRegistry.timer("openshift_client_api_request", listOf())
+        meterRegistry.timer("openshift_api_request", listOf(Tag.of("client","OpenShiftClient")))
             .record(System.currentTimeMillis() - start, TimeUnit.MILLISECONDS)
     }
 
