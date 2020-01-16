@@ -10,6 +10,7 @@ import no.skatteetaten.aurora.gorg.extensions.deleteApplicationDeployment
 import no.skatteetaten.aurora.gorg.extensions.errorStackTraceIfDebug
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
+import java.util.concurrent.TimeUnit
 
 private val logger = KotlinLogging.logger {}
 
@@ -46,6 +47,13 @@ class DeleteService(
     ): Boolean {
 
         if (!deleteResources) {
+            val start = System.currentTimeMillis()
+            Thread.sleep(100)
+            meterRegistry.timer(
+                "openshift_api_request",
+                listOf(Tag.of("method", "DELETE"), Tag.of("outcome", "SUCCESS"))
+            )
+                .record(System.currentTimeMillis() - start, TimeUnit.MILLISECONDS)
             logger.info(
                 "deleteResources=false. Resource=$item. Will be deleted once deleteResource flag is true"
             )
@@ -54,11 +62,22 @@ class DeleteService(
         }
 
         return try {
+            val start = System.currentTimeMillis()
             deleteFunction(client).also {
                 if (it) {
+                    meterRegistry.timer(
+                        "openshift_api_request",
+                        listOf(Tag.of("method", "DELETE"), Tag.of("outcome", "SUCCESS"))
+                    )
+                        .record(System.currentTimeMillis() - start, TimeUnit.MILLISECONDS)
                     count(item, "deleted")
                     logger.info("Resource=$item deleted successfully.")
                 } else {
+                    meterRegistry.timer(
+                        "openshift_api_request",
+                        listOf(Tag.of("method", "DELETE"), Tag.of("outcome", "ERROR"))
+                    )
+                        .record(System.currentTimeMillis() - start, TimeUnit.MILLISECONDS)
                     count(item, "error")
                     logger.info("Resource=$item was not deleted.")
                 }

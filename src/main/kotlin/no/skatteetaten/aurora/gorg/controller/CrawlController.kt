@@ -18,7 +18,6 @@ class CrawlController(
     @GetMapping("/projects")
     fun listProjects() = openShiftService.findTemporaryProjects()
 
-    @Timed(value="openshift_api_request")
     @DeleteMapping("/projects")
     fun deleteProjects() = openShiftService.findTemporaryProjects()
         .filter { it.ttl.isNegative }
@@ -28,7 +27,6 @@ class CrawlController(
     @GetMapping("/buildConfigs")
     fun listBuildConfig() = openShiftService.findTemporaryBuildConfigs()
 
-    @Timed(value="openshift_api_request")
     @DeleteMapping("/buildConfigs")
     fun deleteBuildConfigs() = openShiftService.findTemporaryBuildConfigs()
         .filter { it.ttl.isNegative }
@@ -38,7 +36,6 @@ class CrawlController(
     @GetMapping("/applicationDeployments")
     fun listApplicationDeployments() = openShiftService.findTemporaryApplicationDeployments()
 
-    @Timed(value="openshift_api_request")
     @DeleteMapping("/applicationDeployments")
     fun deleteApplicationDeployments() = openShiftService.findTemporaryApplicationDeployments()
         .filter { it.ttl.isNegative }
