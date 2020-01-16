@@ -5,12 +5,12 @@ import io.fabric8.openshift.client.DefaultOpenShiftClient
 import io.fabric8.openshift.client.OpenShiftClient
 import io.micrometer.core.instrument.MeterRegistry
 import io.micrometer.core.instrument.Tag
+import java.util.concurrent.TimeUnit
 import mu.KotlinLogging
 import no.skatteetaten.aurora.gorg.extensions.deleteApplicationDeployment
 import no.skatteetaten.aurora.gorg.extensions.errorStackTraceIfDebug
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
-import java.util.concurrent.TimeUnit
 
 private val logger = KotlinLogging.logger {}
 

@@ -14,7 +14,7 @@ class CrawlController(
     val openShiftService: OpenShiftService,
     val deleteService: DeleteService
 ) {
-    @Timed(value="openshift_api_request")
+    @Timed(value = "openshift_api_request")
     @GetMapping("/projects")
     fun listProjects() = openShiftService.findTemporaryProjects()
 
@@ -23,7 +23,7 @@ class CrawlController(
         .filter { it.ttl.isNegative }
         .forEach { deleteService.deleteProject(it) }
 
-    @Timed(value="openshift_api_request")
+    @Timed(value = "openshift_api_request")
     @GetMapping("/buildConfigs")
     fun listBuildConfig() = openShiftService.findTemporaryBuildConfigs()
 
@@ -32,7 +32,7 @@ class CrawlController(
         .filter { it.ttl.isNegative }
         .forEach { deleteService.deleteBuildConfig(it) }
 
-    @Timed(value="openshift_api_request")
+    @Timed(value = "openshift_api_request")
     @GetMapping("/applicationDeployments")
     fun listApplicationDeployments() = openShiftService.findTemporaryApplicationDeployments()
 
