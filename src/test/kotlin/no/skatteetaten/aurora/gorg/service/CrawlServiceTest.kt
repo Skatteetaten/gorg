@@ -5,7 +5,6 @@ import assertk.assertions.hasSize
 import assertk.assertions.isEqualTo
 import assertk.assertions.isGreaterThan
 import assertk.assertions.isNotNull
-import io.fabric8.kubernetes.api.model.RootPaths
 import io.fabric8.openshift.api.model.BuildConfigList
 import io.fabric8.openshift.api.model.ProjectList
 import java.time.Instant

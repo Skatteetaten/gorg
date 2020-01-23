@@ -4,7 +4,6 @@ import assertk.assertThat
 import assertk.assertions.isEqualTo
 import assertk.assertions.isFalse
 import assertk.assertions.isTrue
-import io.fabric8.kubernetes.api.model.RootPaths
 import io.micrometer.core.instrument.simple.SimpleMeterRegistry
 import java.time.Duration
 import java.time.Instant
