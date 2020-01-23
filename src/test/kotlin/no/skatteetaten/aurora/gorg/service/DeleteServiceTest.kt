@@ -16,14 +16,14 @@ import no.skatteetaten.aurora.gorg.service.DeleteService.Companion.METRICS_DELET
 import no.skatteetaten.aurora.mockmvc.extensions.mockwebserver.execute
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.springframework.security.test.context.support.WithMockUser
 
+@WithMockUser
 class DeleteServiceTest : AbstractOpenShiftServerTest() {
 
     private val meterRegistry = SimpleMeterRegistry()
 
     private lateinit var deleteService: DeleteService
-
-    private val root = RootPaths()
 
     @BeforeEach
     fun setUp() {

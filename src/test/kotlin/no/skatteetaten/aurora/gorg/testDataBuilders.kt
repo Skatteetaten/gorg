@@ -17,7 +17,7 @@ import no.skatteetaten.aurora.gorg.service.ProjectResource
 
 data class BuildConfigDataBuilder(
     val bcNamespace: String = "namespace",
-    val bcKind: String = "Deployment",
+    val bcKind: String = "BuildConfig",
     val bcName: String = "name",
     val bcTtl: Instant = Instant.now().plusSeconds(60)
 ) {

@@ -1,6 +1,7 @@
 package no.skatteetaten.aurora.gorg.controller
 
 import io.micrometer.core.annotation.Timed
+import no.skatteetaten.aurora.gorg.ApplicationConfig.Companion.OPENSHIFT_API_METRICS
 import no.skatteetaten.aurora.gorg.service.DeleteService
 import no.skatteetaten.aurora.gorg.service.OpenShiftService
 import org.springframework.web.bind.annotation.DeleteMapping
@@ -14,7 +15,7 @@ class CrawlController(
     val openShiftService: OpenShiftService,
     val deleteService: DeleteService
 ) {
-    @Timed(value = "openshift_api_request")
+    @Timed(value = OPENSHIFT_API_METRICS)
     @GetMapping("/projects")
     fun listProjects() = openShiftService.findTemporaryProjects()
 
@@ -23,7 +24,7 @@ class CrawlController(
         .filter { it.ttl.isNegative }
         .forEach { deleteService.deleteProject(it) }
 
-    @Timed(value = "openshift_api_request")
+    @Timed(value = OPENSHIFT_API_METRICS)
     @GetMapping("/buildConfigs")
     fun listBuildConfig() = openShiftService.findTemporaryBuildConfigs()
 
@@ -32,7 +33,7 @@ class CrawlController(
         .filter { it.ttl.isNegative }
         .forEach { deleteService.deleteBuildConfig(it) }
 
-    @Timed(value = "openshift_api_request")
+    @Timed(value = OPENSHIFT_API_METRICS)
     @GetMapping("/applicationDeployments")
     fun listApplicationDeployments() = openShiftService.findTemporaryApplicationDeployments()
 

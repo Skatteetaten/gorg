@@ -7,6 +7,7 @@ import io.micrometer.core.instrument.MeterRegistry
 import io.micrometer.core.instrument.Tag
 import java.util.concurrent.TimeUnit
 import mu.KotlinLogging
+import no.skatteetaten.aurora.gorg.ApplicationConfig.Companion.OPENSHIFT_API_METRICS
 import no.skatteetaten.aurora.gorg.extensions.deleteApplicationDeployment
 import no.skatteetaten.aurora.gorg.extensions.errorStackTraceIfDebug
 import org.springframework.beans.factory.annotation.Value
@@ -22,7 +23,7 @@ class DeleteService(
 ) {
 
     companion object {
-        val METRICS_DELETED_RESOURCES = "gorg_deleted_resources"
+        const val METRICS_DELETED_RESOURCES = "gorg_deleted_resources"
     }
 
     fun deleteApplicationDeployment(item: ApplicationDeploymentResource) = deleteResource(item) { client ->
@@ -50,7 +51,7 @@ class DeleteService(
             val start = System.currentTimeMillis()
             Thread.sleep(100)
             meterRegistry.timer(
-                "openshift_api_request",
+                OPENSHIFT_API_METRICS,
                 listOf(Tag.of("method", "DELETE"), Tag.of("outcome", "SUCCESS"))
             )
                 .record(System.currentTimeMillis() - start, TimeUnit.MILLISECONDS)
@@ -66,7 +67,7 @@ class DeleteService(
             deleteFunction(client).also {
                 if (it) {
                     meterRegistry.timer(
-                        "openshift_api_request",
+                        OPENSHIFT_API_METRICS,
                         listOf(Tag.of("method", "DELETE"), Tag.of("outcome", "SUCCESS"))
                     )
                         .record(System.currentTimeMillis() - start, TimeUnit.MILLISECONDS)
@@ -74,7 +75,7 @@ class DeleteService(
                     logger.info("Resource=$item deleted successfully.")
                 } else {
                     meterRegistry.timer(
-                        "openshift_api_request",
+                        OPENSHIFT_API_METRICS,
                         listOf(Tag.of("method", "DELETE"), Tag.of("outcome", "ERROR"))
                     )
                         .record(System.currentTimeMillis() - start, TimeUnit.MILLISECONDS)
