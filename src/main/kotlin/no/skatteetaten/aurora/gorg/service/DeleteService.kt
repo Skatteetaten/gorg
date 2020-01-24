@@ -21,7 +21,7 @@ class DeleteService(
 ) {
 
     companion object {
-        val METRICS_DELETED_RESOURCES = "gorg_deleted_resources"
+        const val METRICS_DELETED_RESOURCES = "gorg_deleted_resources"
     }
 
     fun deleteApplicationDeployment(item: ApplicationDeploymentResource) = deleteResource(item) { client ->
@@ -77,8 +77,9 @@ class DeleteService(
         meterRegistry.counter(
             METRICS_DELETED_RESOURCES,
             listOf(
-                Tag.of("resource", item.javaClass.name.replace("Resource", "")),
-                Tag.of("status", status)
+                Tag.of("resource", item.javaClass.simpleName.replace("Resource", "")),
+                Tag.of("status", status),
+                Tag.of("affiliation", item.affiliation)
             )
         ).increment()
     }

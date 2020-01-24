@@ -5,7 +5,6 @@ import assertk.assertions.hasSize
 import assertk.assertions.isEqualTo
 import assertk.assertions.isGreaterThan
 import assertk.assertions.isNotNull
-import io.fabric8.kubernetes.api.model.RootPaths
 import io.fabric8.openshift.api.model.BuildConfigList
 import io.fabric8.openshift.api.model.ProjectList
 import java.time.Instant
@@ -15,10 +14,10 @@ import no.skatteetaten.aurora.gorg.ProjectDataBuilder
 import no.skatteetaten.aurora.gorg.model.ApplicationDeploymentList
 import no.skatteetaten.aurora.mockmvc.extensions.mockwebserver.execute
 import org.junit.jupiter.api.Test
+import org.springframework.security.test.context.support.WithMockUser
 
+@WithMockUser
 class CrawlServiceTest : AbstractOpenShiftServerTest() {
-
-    private val root = RootPaths()
 
     @Test
     fun `Find temporary buildConfigs`() {
@@ -27,14 +26,14 @@ class CrawlServiceTest : AbstractOpenShiftServerTest() {
         val list = BuildConfigList().apply {
             items = listOf(bc)
         }
-        mockServer.execute(root, list) {
+        mockServer.execute(list) {
             val service = OpenShiftService(mockClient)
-            val applications = service.findTemporaryBuildConfigs(Instant.now())
-            assertThat(applications).hasSize(1)
-            assertThat(applications[0].name).isEqualTo("name")
-            assertThat(applications[0].namespace).isEqualTo("namespace")
-            assertThat(applications[0].ttl.seconds).isGreaterThan(0)
-            assertThat(applications[0].removalTime).isNotNull()
+            val buildConfigs = service.findTemporaryBuildConfigs(Instant.now())
+            assertThat(buildConfigs).hasSize(1)
+            assertThat(buildConfigs[0].name).isEqualTo("name")
+            assertThat(buildConfigs[0].namespace).isEqualTo("namespace")
+            assertThat(buildConfigs[0].ttl.seconds).isGreaterThan(0)
+            assertThat(buildConfigs[0].removalTime).isNotNull()
         }
     }
 

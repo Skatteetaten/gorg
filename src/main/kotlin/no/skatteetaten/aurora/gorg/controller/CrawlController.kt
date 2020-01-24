@@ -13,7 +13,6 @@ class CrawlController(
     val openShiftService: OpenShiftService,
     val deleteService: DeleteService
 ) {
-
     @GetMapping("/projects")
     fun listProjects() = openShiftService.findTemporaryProjects()
 

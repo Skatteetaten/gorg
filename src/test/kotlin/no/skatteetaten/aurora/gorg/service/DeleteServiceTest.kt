@@ -4,7 +4,6 @@ import assertk.assertThat
 import assertk.assertions.isEqualTo
 import assertk.assertions.isFalse
 import assertk.assertions.isTrue
-import io.fabric8.kubernetes.api.model.RootPaths
 import io.micrometer.core.instrument.simple.SimpleMeterRegistry
 import java.time.Duration
 import java.time.Instant
@@ -16,14 +15,14 @@ import no.skatteetaten.aurora.gorg.service.DeleteService.Companion.METRICS_DELET
 import no.skatteetaten.aurora.mockmvc.extensions.mockwebserver.execute
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.springframework.security.test.context.support.WithMockUser
 
+@WithMockUser
 class DeleteServiceTest : AbstractOpenShiftServerTest() {
 
     private val meterRegistry = SimpleMeterRegistry()
 
     private lateinit var deleteService: DeleteService
-
-    private val root = RootPaths()
 
     @BeforeEach
     fun setUp() {
@@ -48,7 +47,9 @@ class DeleteServiceTest : AbstractOpenShiftServerTest() {
             404 to false
         ) {
             val deleted = deleteService.deleteProject(
-                ProjectResource(name = "non-existing-name", ttl = Duration.ZERO, removalTime = Instant.now())
+                ProjectResource(
+                    name = "non-existing-name",
+                    affiliation = "non-existing-affiliation", ttl = Duration.ZERO, removalTime = Instant.now())
             )
 
             assertThat(deleted).isFalse()
@@ -75,6 +76,7 @@ class DeleteServiceTest : AbstractOpenShiftServerTest() {
             val deleted = deleteService.deleteBuildConfig(
                 BuildConfigResource(
                     name = "non-existing-name",
+                    affiliation = "non-existing-affiliation",
                     ttl = Duration.ZERO,
                     namespace = "namespace",
                     removalTime = Instant.now()
@@ -106,6 +108,7 @@ class DeleteServiceTest : AbstractOpenShiftServerTest() {
             val deleted = deleteService.deleteApplicationDeployment(
                 ApplicationDeploymentResource(
                     name = "non-existing-name",
+                    affiliation = "non-existing-affiliation",
                     ttl = Duration.ZERO,
                     namespace = "namespace",
                     removalTime = Instant.now()

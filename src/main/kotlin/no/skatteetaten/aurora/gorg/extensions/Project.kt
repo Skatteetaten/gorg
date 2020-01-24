@@ -10,6 +10,7 @@ fun Project.toResource(now: Instant): ProjectResource {
 
     return ProjectResource(
         name = this.metadata.name,
+        affiliation = this.metadata.labels["affiliation"]?.let { it }.toString(),
         ttl = Duration.between(now, removalTime),
         removalTime = removalTime
     )
