@@ -22,12 +22,6 @@ gorg:
     delete:
         resources: false
 
-management:
-    metrics:
-        distribution:
-            sla:
-                openshift_api_request: 10ms, 25ms, 50ms, 100ms, 500ms, 1s, 5s
-
 logging:
     pattern:
       console: "%d [%-9.9thread] %highlight(%-5level) %cyan(%logger:%L) %X - %msg %n%rEx{full}"

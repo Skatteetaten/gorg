@@ -12,10 +12,6 @@ import org.springframework.security.web.authentication.www.BasicAuthenticationEn
 @Configuration
 class ApplicationConfig : BeanPostProcessor {
 
-    companion object {
-        const val OPENSHIFT_API_METRICS = "openshift_api_request"
-    }
-
     @Bean
     fun client(): OpenShiftClient {
         return DefaultOpenShiftClient()
