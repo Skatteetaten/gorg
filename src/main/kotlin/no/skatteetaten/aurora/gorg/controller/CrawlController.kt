@@ -1,6 +1,7 @@
 package no.skatteetaten.aurora.gorg.controller
 
 import no.skatteetaten.aurora.gorg.service.DeleteService
+import no.skatteetaten.aurora.gorg.service.KubernetesService
 import no.skatteetaten.aurora.gorg.service.OpenShiftService
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
@@ -11,10 +12,11 @@ import org.springframework.web.bind.annotation.RestController
 @RequestMapping("/api")
 class CrawlController(
     val openShiftService: OpenShiftService,
+    val kubernetesService: KubernetesService,
     val deleteService: DeleteService
 ) {
     @GetMapping("/projects")
-    fun listProjects() = openShiftService.findTemporaryProjects()
+    fun listProjects() = kubernetesService.findTemporaryProjects()
 
     @DeleteMapping("/projects")
     fun deleteProjects() = openShiftService.findTemporaryProjects()
