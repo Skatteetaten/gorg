@@ -10,7 +10,6 @@ import io.micrometer.core.instrument.MeterRegistry
 import io.micrometer.core.instrument.Tag
 import kotlinx.coroutines.runBlocking
 import mu.KotlinLogging
-import no.skatteetaten.aurora.gorg.extensions.deleteApplicationDeployment
 import no.skatteetaten.aurora.gorg.extensions.errorStackTraceIfDebug
 import no.skatteetaten.aurora.kubernetes.ClientTypes
 import no.skatteetaten.aurora.kubernetes.KubernetesClient
@@ -22,9 +21,8 @@ private val logger = KotlinLogging.logger {}
 
 @Service
 class DeleteService(
-    val client: OpenShiftClient,
     @TargetClient(ClientTypes.SERVICE_ACCOUNT)
-    val kClient: KubernetesClient,
+    val client: KubernetesClient,
     val meterRegistry: MeterRegistry,
     @Value("\${gorg.delete.resources}") val deleteResources: Boolean
 ) {
@@ -33,28 +31,30 @@ class DeleteService(
         const val METRICS_DELETED_RESOURCES = "gorg_deleted_resources"
     }
 
-    fun deleteApplicationDeployment(item: ApplicationDeploymentResource) = deleteResource(item) { client ->
+/*    fun deleteApplicationDeployment(item: ApplicationDeploymentResource) = deleteResource(item) { client ->
         (client as DefaultOpenShiftClient).deleteApplicationDeployment(item.namespace, item.name)
     }
 
-    fun deleteProject(item: ProjectResource) = deleteResource(item) { client ->
+    fun deleteProject(item: ProjectResource) = deleteResource(item) { client
         client.projects().withName(item.name).delete()
     }
+*/
 
-    fun deleteProjectKubernetes(item: ProjectResource) =
-        runBlocking {  kClient.delete(newProject { metadata { item } }) }
+    fun deleteProject(item: ProjectResource) = deleteResource(item) { client ->
+        client.delete(newProject { metadata { item } })  }
 
+/*
     fun deleteBuildConfig(item: BuildConfigResource) = deleteResource(item) { client ->
         client.buildConfigs()
             .inNamespace(item.namespace)
             .withName(item.name)
             .withPropagationPolicy("Background")
             .delete()
-    }
+    }*/
 
     fun deleteResource(
         item: BaseResource,
-        deleteFunction: (OpenShiftClient) -> Boolean
+        deleteFunction: (KubernetesClient) -> Boolean
     ): Boolean {
 
         if (!deleteResources) {
@@ -66,7 +66,7 @@ class DeleteService(
         }
 
         return try {
-            deleteFunction(client).also {
+            runBlocking { deleteFunction(client).also {
                 if (it) {
                     count(item, "deleted")
                     logger.info("Resource=$item deleted successfully.")
@@ -74,7 +74,7 @@ class DeleteService(
                     count(item, "error")
                     logger.info("Resource=$item was not deleted.")
                 }
-            }
+            } }
         } catch (e: KubernetesClientException) {
             logger.errorStackTraceIfDebug(
                 "Deletion of Resource=$item failed with exception=${e.code} message=${e.localizedMessage}",
