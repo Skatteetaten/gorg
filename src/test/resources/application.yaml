@@ -28,3 +28,4 @@ integrations:
 
 kubernetes:
     tokenLocation: src/test/resources/test-token.txt
+    url: '/'

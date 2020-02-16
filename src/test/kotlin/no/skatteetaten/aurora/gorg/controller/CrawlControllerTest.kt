@@ -2,23 +2,15 @@ package no.skatteetaten.aurora.gorg.controller
 
 import com.nhaarman.mockito_kotlin.anyOrNull
 import com.nhaarman.mockito_kotlin.given
-import com.nhaarman.mockito_kotlin.then
-import com.nhaarman.mockito_kotlin.times
-import io.fabric8.openshift.client.server.mock.OpenShiftMockServer
-import java.time.Duration
 import no.skatteetaten.aurora.gorg.ApplicationDeploymentResourceBuilder
 import no.skatteetaten.aurora.gorg.BuildConfigResourceBuilder
 import no.skatteetaten.aurora.gorg.ProjectResourceBuilder
 import no.skatteetaten.aurora.gorg.service.DeleteService
 import no.skatteetaten.aurora.gorg.service.KubernetesService
-import no.skatteetaten.aurora.kubernetes.KubernetesClient
-import no.skatteetaten.aurora.kubernetes.testutils.kubernetesToken
 import no.skatteetaten.aurora.mockmvc.extensions.Path
-import no.skatteetaten.aurora.mockmvc.extensions.delete
 import no.skatteetaten.aurora.mockmvc.extensions.get
 import no.skatteetaten.aurora.mockmvc.extensions.responseJsonPath
 import no.skatteetaten.aurora.mockmvc.extensions.statusIsOk
-import okhttp3.mockwebserver.MockWebServer
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
@@ -30,7 +22,6 @@ import org.springframework.security.test.context.support.WithMockUser
 import org.springframework.test.annotation.DirtiesContext
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.springframework.test.web.servlet.MockMvc
-import org.springframework.web.reactive.function.client.WebClient
 
 @ExtendWith(SpringExtension::class)
 @SpringBootTest
@@ -41,7 +32,7 @@ import org.springframework.web.reactive.function.client.WebClient
 class CrawlControllerTest(@Autowired val mockMvc: MockMvc) {
 
     @MockBean
-    private lateinit var openShiftMockServer: OpenShiftMockServer
+    private lateinit var kubernetesService: KubernetesService
 
     @MockBean
     private lateinit var deleteService: DeleteService
