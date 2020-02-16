@@ -1,13 +1,18 @@
 package no.skatteetaten.aurora.gorg.service
 
+import com.fkorotkov.openshift.newBuildConfig
+import com.fkorotkov.openshift.newProject
+import com.fkorotkov.openshift.metadata
 import io.micrometer.core.instrument.MeterRegistry
 import io.micrometer.core.instrument.Tag
 import kotlinx.coroutines.runBlocking
 import mu.KotlinLogging
 import no.skatteetaten.aurora.gorg.extensions.errorStackTraceIfDebug
+import no.skatteetaten.aurora.gorg.model.ApplicationDeployment
 import no.skatteetaten.aurora.kubernetes.ClientTypes
 import no.skatteetaten.aurora.kubernetes.KubernetesClient
 import no.skatteetaten.aurora.kubernetes.TargetClient
+import no.skatteetaten.aurora.kubernetes.crd.newSkatteetatenKubernetesResource
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 
@@ -25,20 +30,22 @@ class DeleteService(
         const val METRICS_DELETED_RESOURCES = "gorg_deleted_resources"
     }
 
-/*
+
 
 
     fun deleteApplicationDeployment(item: ApplicationDeploymentResource) = deleteResource(item) { client ->
-        client.delete(newSkatteetatenKubernetesResource<ApplicationDeployment> { metadata { item } })
+        runBlocking{ client.delete(newSkatteetatenKubernetesResource<ApplicationDeployment> { metadata { name = item.name
+            namespace = item.namespace
+        } }) }
     }
 
     fun deleteProject(item: ProjectResource) = deleteResource(item) { client ->
-        client.delete(newProject { metadata { item } })  }
+        runBlocking{ client.delete(newProject { metadata { item } })  }}
 
     fun deleteBuildConfig(item: BuildConfigResource) = deleteResource(item) { client ->
-        client.delete(newBuildConfig { metadata { item } }) }
+        runBlocking{ client.delete(newBuildConfig { metadata { item } }) }}
 
-*/
+
 
 /*
     fun deleteBuildConfig(item: BuildConfigResource) = deleteResource(item) { client ->
@@ -63,7 +70,7 @@ class DeleteService(
         }
 
         return try {
-            runBlocking { deleteFunction(client).also {
+            deleteFunction(client).also {
                 if (it) {
                     count(item, "deleted")
                     logger.info("Resource=$item deleted successfully.")
@@ -71,7 +78,7 @@ class DeleteService(
                     count(item, "error")
                     logger.info("Resource=$item was not deleted.")
                 }
-            } }
+            }
         } catch (e: Exception) {
             logger.errorStackTraceIfDebug(
                 "Deletion of Resource=$item failed with exception=${e} message=${e.localizedMessage}",

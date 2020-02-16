@@ -2,12 +2,15 @@ package no.skatteetaten.aurora.gorg.controller
 
 import com.nhaarman.mockito_kotlin.anyOrNull
 import com.nhaarman.mockito_kotlin.given
+import com.nhaarman.mockito_kotlin.then
+import com.nhaarman.mockito_kotlin.times
 import no.skatteetaten.aurora.gorg.ApplicationDeploymentResourceBuilder
 import no.skatteetaten.aurora.gorg.BuildConfigResourceBuilder
 import no.skatteetaten.aurora.gorg.ProjectResourceBuilder
 import no.skatteetaten.aurora.gorg.service.DeleteService
 import no.skatteetaten.aurora.gorg.service.KubernetesService
 import no.skatteetaten.aurora.mockmvc.extensions.Path
+import no.skatteetaten.aurora.mockmvc.extensions.delete
 import no.skatteetaten.aurora.mockmvc.extensions.get
 import no.skatteetaten.aurora.mockmvc.extensions.responseJsonPath
 import no.skatteetaten.aurora.mockmvc.extensions.statusIsOk
@@ -22,6 +25,7 @@ import org.springframework.security.test.context.support.WithMockUser
 import org.springframework.test.annotation.DirtiesContext
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.springframework.test.web.servlet.MockMvc
+import java.time.Duration
 
 @ExtendWith(SpringExtension::class)
 @SpringBootTest
@@ -47,7 +51,7 @@ class CrawlControllerTest(@Autowired val mockMvc: MockMvc) {
         }
     }
 
-  /*  @Test
+    @Test
     fun `Delete projects with negative ttl`() {
         given(kubernetesService.findTemporaryProjects(anyOrNull()))
             .willReturn(
@@ -61,7 +65,7 @@ class CrawlControllerTest(@Autowired val mockMvc: MockMvc) {
             statusIsOk()
         }
         then(deleteService).should(times(1)).deleteProject(anyOrNull())
-    }*/
+    }
 
     @Test
     fun `Get build configs`() {
@@ -73,7 +77,7 @@ class CrawlControllerTest(@Autowired val mockMvc: MockMvc) {
         }
     }
 
-/*    @Test
+    @Test
     fun `Delete build configs with negative ttl`() {
         given(kubernetesService.findTemporaryBuildConfigs(anyOrNull()))
             .willReturn(
@@ -87,7 +91,7 @@ class CrawlControllerTest(@Autowired val mockMvc: MockMvc) {
             statusIsOk()
         }
         then(deleteService).should(times(1)).deleteBuildConfig(anyOrNull())
-    }*/
+    }
 
     @Test
     fun `Get application deployments`() {
@@ -99,7 +103,7 @@ class CrawlControllerTest(@Autowired val mockMvc: MockMvc) {
         }
     }
 
-  /*  @Test
+    @Test
     fun `Delete application deployments with negative ttl`() {
         given(kubernetesService.findTemporaryApplicationDeployments(anyOrNull()))
             .willReturn(
@@ -113,5 +117,5 @@ class CrawlControllerTest(@Autowired val mockMvc: MockMvc) {
             statusIsOk()
         }
         then(deleteService).should(times(1)).deleteApplicationDeployment(anyOrNull())
-    }*/
+    }
 }
