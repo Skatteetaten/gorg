@@ -16,8 +16,8 @@ plugins {
 extra["jackson-bom.version"] = "2.10.2"
 
 dependencies {
-    implementation("io.fabric8:openshift-client:4.7.0")
     implementation("no.skatteetaten.aurora.kubernetes:kubernetes-reactor-coroutines-client:1.0-SNAPSHOT")
+    testImplementation("io.fabric8:openshift-server-mock:4.8.0")
     testImplementation("com.fkorotkov:kubernetes-dsl:3.0")
 
     implementation("org.springframework.boot:spring-boot-starter-security")

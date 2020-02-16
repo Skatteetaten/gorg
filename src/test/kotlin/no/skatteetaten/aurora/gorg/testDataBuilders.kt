@@ -33,6 +33,7 @@ data class BuildConfigDataBuilder(
             }
 }
 
+
 data class ApplicationDeploymentBuilder(
     val adNamespace: String = "namespace",
     val adKind: String = "ApplicationDeployment",
@@ -51,6 +52,7 @@ data class ApplicationDeploymentBuilder(
         )
     }
 }
+
 
 data class ProjectDataBuilder(
     val pName: String = "name",

@@ -19,3 +19,12 @@ gorg:
 management:
     server:
         port: -1
+
+integrations:
+    kubernetes:
+        port: 8081
+    custom:
+        port: 8082
+
+kubernetes:
+    tokenLocation: src/test/resources/test-token.txt

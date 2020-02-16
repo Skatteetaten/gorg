@@ -19,16 +19,16 @@ class CrawlController(
     @DeleteMapping("/projects")
     fun deleteProjects() = kubernetesService.findTemporaryProjects()
         .filter { it.ttl.isNegative }
-        .forEach { deleteService.deleteProject(it) }
+     //   .forEach { deleteService.deleteProject(it) }
 
     @GetMapping("/buildConfigs")
     fun listBuildConfig() = kubernetesService.findTemporaryBuildConfigs()
 
 
-/*    @DeleteMapping("/buildConfigs")
+   @DeleteMapping("/buildConfigs")
     fun deleteBuildConfigs() = kubernetesService.findTemporaryBuildConfigs()
         .filter { it.ttl.isNegative }
-        .forEach { deleteService.deleteBuildConfig(it) }
+    //    .forEach { deleteService.deleteBuildConfig(it) }
 
     @GetMapping("/applicationDeployments")
     fun listApplicationDeployments() = kubernetesService.findTemporaryApplicationDeployments()
@@ -36,5 +36,5 @@ class CrawlController(
     @DeleteMapping("/applicationDeployments")
     fun deleteApplicationDeployments() = kubernetesService.findTemporaryApplicationDeployments()
         .filter { it.ttl.isNegative }
-        .forEach { deleteService.deleteApplicationDeployment(it) }
-*/}
+    //    .forEach { deleteService.deleteApplicationDeployment(it) }
+}

@@ -7,8 +7,8 @@ import kotlinx.coroutines.runBlocking
 import no.skatteetaten.aurora.gorg.extensions.REMOVE_AFTER_LABEL
 import no.skatteetaten.aurora.gorg.extensions.TERMINATING_PHASE
 import no.skatteetaten.aurora.gorg.extensions.toResource
-import no.skatteetaten.aurora.kubernetes.ApplicationDeployment
-import no.skatteetaten.aurora.kubernetes.ApplicationDeploymentList
+import no.skatteetaten.aurora.gorg.model.ApplicationDeployment
+import no.skatteetaten.aurora.gorg.model.ApplicationDeploymentList
 import no.skatteetaten.aurora.kubernetes.ClientTypes
 import no.skatteetaten.aurora.kubernetes.KubernetesClient
 import no.skatteetaten.aurora.kubernetes.TargetClient

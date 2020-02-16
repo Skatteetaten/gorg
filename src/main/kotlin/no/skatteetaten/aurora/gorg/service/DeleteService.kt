@@ -1,11 +1,5 @@
 package no.skatteetaten.aurora.gorg.service
 
-import com.fkorotkov.openshift.metadata
-import com.fkorotkov.openshift.newProject
-import io.fabric8.kubernetes.client.KubernetesClientException
-import io.fabric8.openshift.api.model.Project
-import io.fabric8.openshift.client.DefaultOpenShiftClient
-import io.fabric8.openshift.client.OpenShiftClient
 import io.micrometer.core.instrument.MeterRegistry
 import io.micrometer.core.instrument.Tag
 import kotlinx.coroutines.runBlocking
@@ -31,17 +25,20 @@ class DeleteService(
         const val METRICS_DELETED_RESOURCES = "gorg_deleted_resources"
     }
 
-/*    fun deleteApplicationDeployment(item: ApplicationDeploymentResource) = deleteResource(item) { client ->
-        (client as DefaultOpenShiftClient).deleteApplicationDeployment(item.namespace, item.name)
-    }
+/*
 
-    fun deleteProject(item: ProjectResource) = deleteResource(item) { client
-        client.projects().withName(item.name).delete()
+
+    fun deleteApplicationDeployment(item: ApplicationDeploymentResource) = deleteResource(item) { client ->
+        client.delete(newSkatteetatenKubernetesResource<ApplicationDeployment> { metadata { item } })
     }
-*/
 
     fun deleteProject(item: ProjectResource) = deleteResource(item) { client ->
         client.delete(newProject { metadata { item } })  }
+
+    fun deleteBuildConfig(item: BuildConfigResource) = deleteResource(item) { client ->
+        client.delete(newBuildConfig { metadata { item } }) }
+
+*/
 
 /*
     fun deleteBuildConfig(item: BuildConfigResource) = deleteResource(item) { client ->
@@ -75,9 +72,9 @@ class DeleteService(
                     logger.info("Resource=$item was not deleted.")
                 }
             } }
-        } catch (e: KubernetesClientException) {
+        } catch (e: Exception) {
             logger.errorStackTraceIfDebug(
-                "Deletion of Resource=$item failed with exception=${e.code} message=${e.localizedMessage}",
+                "Deletion of Resource=$item failed with exception=${e} message=${e.localizedMessage}",
                 e
             )
             count(item, "error")
