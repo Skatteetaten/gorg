@@ -10,10 +10,12 @@ import io.fabric8.openshift.api.model.Project
 import java.time.Duration
 import java.time.Instant
 import no.skatteetaten.aurora.gorg.extensions.REMOVE_AFTER_LABEL
-import no.skatteetaten.aurora.gorg.model.ApplicationDeployment
 import no.skatteetaten.aurora.gorg.service.ApplicationDeploymentResource
 import no.skatteetaten.aurora.gorg.service.BuildConfigResource
 import no.skatteetaten.aurora.gorg.service.ProjectResource
+import no.skatteetaten.aurora.kubernetes.ApplicationDeployment
+import no.skatteetaten.aurora.kubernetes.crd.SkatteetatenKubernetesResource
+import no.skatteetaten.aurora.kubernetes.crd.newSkatteetatenKubernetesResource
 
 data class BuildConfigDataBuilder(
     val bcNamespace: String = "namespace",
@@ -36,22 +38,25 @@ data class BuildConfigDataBuilder(
 
 data class ApplicationDeploymentBuilder(
     val adNamespace: String = "namespace",
-    val adKind: String = "ApplicationDeployment",
     val adName: String = "name",
     val adTtl: Instant = Instant.now().plusSeconds(60)
 ) {
 
     fun build(): ApplicationDeployment {
-        return ApplicationDeployment(
-                kind = adKind,
-                metadata = newObjectMeta {
-                    name = adName
-                    namespace = adNamespace
-                    labels = mapOf(REMOVE_AFTER_LABEL to adTtl.epochSecond.toString())
-                }
-        )
+
+       val ad: SkatteetatenKubernetesResource = newSkatteetatenKubernetesResource<ApplicationDeployment> {
+            metadata = newObjectMeta {
+                name = adName
+                namespace = adNamespace
+                labels = mapOf(REMOVE_AFTER_LABEL to adTtl.epochSecond.toString())
+            }
+        }
+        ad.
+        return this.build()
     }
 }
+
+
 
 
 data class ProjectDataBuilder(

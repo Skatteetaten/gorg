@@ -32,13 +32,15 @@ class DeleteServiceTest : AbstractOpenShiftServerTest() {
     @Test
     fun `Delete existing project`() {
         val project = ProjectDataBuilder().build()
-        mockServer.execute(project) {
+        val request = mockServer.execute(project) {
             val deleted = deleteService.deleteProject(project.toResource(Instant.now()))
             val deletedCount = meterRegistry.deletedResourcesCount("status", "deleted")
 
             assertThat(deleted).isTrue()
             assertThat(deletedCount).isEqualTo(1.0)
         }
+        assertThat(request.first()?.method).isEqualTo("DELETE")
+        assertThat(request.first()?.path).isEqualTo("/apis/skatteetaten.no/v1/namespaces/${project.metadata.namespace}/buildconfigs/${project.metadata.name}")
     }
 
     @Test
@@ -59,13 +61,15 @@ class DeleteServiceTest : AbstractOpenShiftServerTest() {
     @Test
     fun `Delete existing buildConfig`() {
         val buildConfig = BuildConfigDataBuilder().build()
-        mockServer.execute(buildConfig) {
+        val request = mockServer.execute(buildConfig) {
             val deleted = deleteService.deleteBuildConfig(buildConfig.toResource(Instant.now()))
             val deletedMetrics = meterRegistry.deletedResourcesCount("status", "deleted")
 
             assertThat(deleted).isTrue()
             assertThat(deletedMetrics).isEqualTo(1.0)
         }
+        assertThat(request.first()?.method).isEqualTo("DELETE")
+        assertThat(request.first()?.path).isEqualTo("/apis/skatteetaten.no/v1/namespaces/${buildConfig.metadata.namespace}/buildconfigs/${buildConfig.metadata.name}")
     }
 
     @Test
@@ -82,7 +86,6 @@ class DeleteServiceTest : AbstractOpenShiftServerTest() {
                     removalTime = Instant.now()
                 )
             )
-
             assertThat(deleted).isFalse()
         }
     }
@@ -90,12 +93,12 @@ class DeleteServiceTest : AbstractOpenShiftServerTest() {
     @Test
     fun `delete expired applicationDeployments`() {
         val ad = ApplicationDeploymentBuilder().build()
-        val request = mockServer.execute(true) {
+        val request = mockServer.execute(ad) {
             val deleted = deleteService.deleteApplicationDeployment(ad.toResource(Instant.now()))
             val deletedCount = meterRegistry.deletedResourcesCount("status", "deleted")
 
-/*            assertThat(deleted).isTrue()
-            assertThat(deletedCount).isEqualTo(1.0)*/
+            assertThat(deleted).isTrue()
+            assertThat(deletedCount).isEqualTo(1.0)
         }
         assertThat(request.first()?.method).isEqualTo("DELETE")
         assertThat(request.first()?.path).isEqualTo("/apis/skatteetaten.no/v1/namespaces/${ad.metadata.namespace}/applicationdeployments/${ad.metadata.name}")
@@ -103,22 +106,23 @@ class DeleteServiceTest : AbstractOpenShiftServerTest() {
 
     @Test
     fun `return not deleted for non-existing applicationDeployments`() {
+        val ad =  ApplicationDeploymentResource(
+            name = "non-existing-name",
+            affiliation = "non-existing-affiliation",
+            ttl = Duration.ZERO,
+            namespace = "namespace",
+            removalTime = Instant.now()
+        )
         val deleteService = DeleteService(mockClient, meterRegistry, true)
-        mockServer.execute(404 to false) {
-            val deleted = deleteService.deleteApplicationDeployment(
-                ApplicationDeploymentResource(
-                    name = "non-existing-name",
-                    affiliation = "non-existing-affiliation",
-                    ttl = Duration.ZERO,
-                    namespace = "namespace",
-                    removalTime = Instant.now()
-                )
-            )
+        val request = mockServer.execute(404 to false) {
+            val deleted = deleteService.deleteApplicationDeployment(ad)
             val deletedCount = meterRegistry.deletedResourcesCount("status", "error")
 
             assertThat(deleted).isFalse()
             assertThat(deletedCount).isEqualTo(1.0)
         }
+        assertThat(request.first()?.method).isEqualTo("DELETE")
+        assertThat(request.first()?.path).isEqualTo("/apis/skatteetaten.no/v1/namespaces/${ad.namespace}/applicationdeployments/${ad.name}")
     }
 
     @Test

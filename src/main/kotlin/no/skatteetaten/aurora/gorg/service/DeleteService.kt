@@ -34,16 +34,14 @@ class DeleteService(
 
 
     fun deleteApplicationDeployment(item: ApplicationDeploymentResource) = deleteResource(item) { client ->
-        runBlocking{ client.delete(newSkatteetatenKubernetesResource<ApplicationDeployment> { metadata { name = item.name
-            namespace = item.namespace
-        } }) }
+        runBlocking{ client.delete(newSkatteetatenKubernetesResource<ApplicationDeployment> { metadata { item } }) }
     }
 
     fun deleteProject(item: ProjectResource) = deleteResource(item) { client ->
-        runBlocking{ client.delete(newProject { metadata { item } })  }}
+        runBlocking{ client.delete(newProject { metadata { item }})  }}
 
     fun deleteBuildConfig(item: BuildConfigResource) = deleteResource(item) { client ->
-        runBlocking{ client.delete(newBuildConfig { metadata { item } }) }}
+        runBlocking{ client.delete(newBuildConfig { metadata { item }}) }}
 
 
 
