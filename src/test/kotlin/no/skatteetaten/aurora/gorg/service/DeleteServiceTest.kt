@@ -6,9 +6,8 @@ import assertk.assertions.isFalse
 import assertk.assertions.isTrue
 import io.micrometer.core.instrument.simple.SimpleMeterRegistry
 import no.skatteetaten.aurora.gorg.ApplicationDeploymentBuilder
-import java.time.Duration
-import java.time.Instant
 import no.skatteetaten.aurora.gorg.BuildConfigDataBuilder
+import no.skatteetaten.aurora.gorg.BuildResponseBody
 import no.skatteetaten.aurora.gorg.ProjectDataBuilder
 import no.skatteetaten.aurora.gorg.extensions.toResource
 import no.skatteetaten.aurora.gorg.service.DeleteService.Companion.METRICS_DELETED_RESOURCES
@@ -16,6 +15,8 @@ import no.skatteetaten.aurora.mockmvc.extensions.mockwebserver.execute
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.security.test.context.support.WithMockUser
+import java.time.Duration
+import java.time.Instant
 
 @WithMockUser
 class DeleteServiceTest : AbstractOpenShiftServerTest() {
@@ -32,7 +33,7 @@ class DeleteServiceTest : AbstractOpenShiftServerTest() {
     @Test
     fun `Delete existing project`() {
         val project = ProjectDataBuilder().build()
-        val request = mockServer.execute(project) {
+        val request = mockServer.execute(BuildResponseBody().success()) {
             val deleted = deleteService.deleteProject(project.toResource(Instant.now()))
             val deletedCount = meterRegistry.deletedResourcesCount("status", "deleted")
 
@@ -40,7 +41,7 @@ class DeleteServiceTest : AbstractOpenShiftServerTest() {
             assertThat(deletedCount).isEqualTo(1.0)
         }
         assertThat(request.first()?.method).isEqualTo("DELETE")
-        assertThat(request.first()?.path).isEqualTo("/apis/skatteetaten.no/v1/namespaces/${project.metadata.namespace}/buildconfigs/${project.metadata.name}")
+        assertThat(request.first()?.path).isEqualTo("/apis/project.openshift.io/v1/projects/${project.metadata.name}")
     }
 
     @Test
@@ -61,7 +62,7 @@ class DeleteServiceTest : AbstractOpenShiftServerTest() {
     @Test
     fun `Delete existing buildConfig`() {
         val buildConfig = BuildConfigDataBuilder().build()
-        val request = mockServer.execute(buildConfig) {
+        val request = mockServer.execute(BuildResponseBody().success()) {
             val deleted = deleteService.deleteBuildConfig(buildConfig.toResource(Instant.now()))
             val deletedMetrics = meterRegistry.deletedResourcesCount("status", "deleted")
 
@@ -69,7 +70,7 @@ class DeleteServiceTest : AbstractOpenShiftServerTest() {
             assertThat(deletedMetrics).isEqualTo(1.0)
         }
         assertThat(request.first()?.method).isEqualTo("DELETE")
-        assertThat(request.first()?.path).isEqualTo("/apis/skatteetaten.no/v1/namespaces/${buildConfig.metadata.namespace}/buildconfigs/${buildConfig.metadata.name}")
+        assertThat(request.first()?.path).isEqualTo("/apis/build.openshift.io/v1/namespaces/${buildConfig.metadata.namespace}/buildconfigs/${buildConfig.metadata.name}")
     }
 
     @Test
@@ -93,12 +94,57 @@ class DeleteServiceTest : AbstractOpenShiftServerTest() {
     @Test
     fun `delete expired applicationDeployments`() {
         val ad = ApplicationDeploymentBuilder().build()
-        val request = mockServer.execute(ad) {
+        val request = mockServer.execute(BuildResponseBody().success()) {
             val deleted = deleteService.deleteApplicationDeployment(ad.toResource(Instant.now()))
             val deletedCount = meterRegistry.deletedResourcesCount("status", "deleted")
 
             assertThat(deleted).isTrue()
             assertThat(deletedCount).isEqualTo(1.0)
+        }
+        assertThat(request.first()?.method).isEqualTo("DELETE")
+        assertThat(request.first()?.path).isEqualTo("/apis/skatteetaten.no/v1/namespaces/${ad.metadata.namespace}/applicationdeployments/${ad.metadata.name}")
+    }
+
+    @Test
+    fun `failed to delete expired applicationDeployments without message`() {
+        val ad = ApplicationDeploymentBuilder().build()
+        val request = mockServer.execute(BuildResponseBody().failure()) {
+            val deleted = deleteService.deleteApplicationDeployment(ad.toResource(Instant.now()))
+            val errorCount = meterRegistry.deletedResourcesCount("status", "error")
+
+            assertThat(deleted).isFalse()
+            assertThat(errorCount).isEqualTo(1.0)
+
+        }
+        assertThat(request.first()?.method).isEqualTo("DELETE")
+        assertThat(request.first()?.path).isEqualTo("/apis/skatteetaten.no/v1/namespaces/${ad.metadata.namespace}/applicationdeployments/${ad.metadata.name}")
+    }
+
+    @Test
+    fun `failed to delete expired applicationDeployments with message`() {
+        val ad = ApplicationDeploymentBuilder().build()
+        val request = mockServer.execute(BuildResponseBody().message()) {
+            val deleted = deleteService.deleteApplicationDeployment(ad.toResource(Instant.now()))
+            val errorCount = meterRegistry.deletedResourcesCount("status", "error")
+
+            assertThat(deleted).isFalse()
+            assertThat(errorCount).isEqualTo(1.0)
+
+        }
+        assertThat(request.first()?.method).isEqualTo("DELETE")
+        assertThat(request.first()?.path).isEqualTo("/apis/skatteetaten.no/v1/namespaces/${ad.metadata.namespace}/applicationdeployments/${ad.metadata.name}")
+    }
+
+    @Test
+    fun `failed to delete expired applicationDeployments without message or status`() {
+        val ad = ApplicationDeploymentBuilder().build()
+        val request = mockServer.execute(BuildResponseBody().empty()) {
+            val deleted = deleteService.deleteApplicationDeployment(ad.toResource(Instant.now()))
+            val errorCount = meterRegistry.deletedResourcesCount("status", "error")
+
+            assertThat(deleted).isFalse()
+            assertThat(errorCount).isEqualTo(1.0)
+
         }
         assertThat(request.first()?.method).isEqualTo("DELETE")
         assertThat(request.first()?.path).isEqualTo("/apis/skatteetaten.no/v1/namespaces/${ad.metadata.namespace}/applicationdeployments/${ad.metadata.name}")
