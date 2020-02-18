@@ -40,5 +40,3 @@ data class ApplicationDeployment(
         } ?: throw IllegalStateException("removeAfter is not set or valid timstamp")
     }
 }
-
-

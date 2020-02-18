@@ -3,6 +3,7 @@ package no.skatteetaten.aurora.gorg.service
 import com.fkorotkov.openshift.metadata
 import com.fkorotkov.openshift.newBuildConfig
 import com.fkorotkov.openshift.newProject
+import java.time.Instant
 import kotlinx.coroutines.runBlocking
 import no.skatteetaten.aurora.gorg.extensions.REMOVE_AFTER_LABEL
 import no.skatteetaten.aurora.gorg.extensions.TERMINATING_PHASE
@@ -15,7 +16,6 @@ import no.skatteetaten.aurora.kubernetes.TargetClient
 import no.skatteetaten.aurora.kubernetes.crd.newSkatteetatenKubernetesResource
 import no.skatteetaten.aurora.kubernetes.newLabel
 import org.springframework.stereotype.Service
-import java.time.Instant
 
 @Service
 class KubernetesService(

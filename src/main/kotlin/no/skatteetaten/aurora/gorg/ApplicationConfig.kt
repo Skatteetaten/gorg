@@ -1,6 +1,5 @@
 package no.skatteetaten.aurora.gorg
 
-
 import no.skatteetaten.aurora.kubernetes.KubernetesClientConfig
 import org.springframework.beans.factory.config.BeanPostProcessor
 import org.springframework.context.annotation.Bean
@@ -12,7 +11,7 @@ import org.springframework.security.web.authentication.www.BasicAuthenticationEn
 
 @Configuration
 @Import(KubernetesClientConfig::class)
-class ApplicationConfig: BeanPostProcessor {
+class ApplicationConfig : BeanPostProcessor {
 
     @Bean
     fun passwordEncoder(): PasswordEncoder {

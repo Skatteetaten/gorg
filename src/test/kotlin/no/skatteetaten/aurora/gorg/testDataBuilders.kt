@@ -33,7 +33,6 @@ data class BuildConfigDataBuilder(
             }
 }
 
-
 data class ApplicationDeploymentBuilder(
     val adNamespace: String = "namespace",
     val adName: String = "name",
@@ -47,11 +46,7 @@ data class ApplicationDeploymentBuilder(
                 labels = mapOf(REMOVE_AFTER_LABEL to adTtl.epochSecond.toString())
             }
         )
-
 }
-
-
-
 
 data class ProjectDataBuilder(
     val pName: String = "name",

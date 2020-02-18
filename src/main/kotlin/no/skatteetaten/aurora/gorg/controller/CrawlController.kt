@@ -24,8 +24,7 @@ class CrawlController(
     @GetMapping("/buildConfigs")
     fun listBuildConfig() = kubernetesService.findTemporaryBuildConfigs()
 
-
-   @DeleteMapping("/buildConfigs")
+    @DeleteMapping("/buildConfigs")
     fun deleteBuildConfigs() = kubernetesService.findTemporaryBuildConfigs()
         .filter { it.ttl.isNegative }
         .forEach { deleteService.deleteBuildConfig(it) }

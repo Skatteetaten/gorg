@@ -5,6 +5,8 @@ import assertk.assertions.isEqualTo
 import assertk.assertions.isFalse
 import assertk.assertions.isTrue
 import io.micrometer.core.instrument.simple.SimpleMeterRegistry
+import java.time.Duration
+import java.time.Instant
 import no.skatteetaten.aurora.gorg.ApplicationDeploymentBuilder
 import no.skatteetaten.aurora.gorg.BuildConfigDataBuilder
 import no.skatteetaten.aurora.gorg.ProjectDataBuilder
@@ -14,8 +16,6 @@ import no.skatteetaten.aurora.mockmvc.extensions.mockwebserver.execute
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.security.test.context.support.WithMockUser
-import java.time.Duration
-import java.time.Instant
 
 @WithMockUser
 class DeleteServiceTest : AbstractOpenShiftServerTest() {
@@ -113,7 +113,6 @@ class DeleteServiceTest : AbstractOpenShiftServerTest() {
 
             assertThat(deleted).isFalse()
             assertThat(errorCount).isEqualTo(1.0)
-
         }
         assertThat(request.first()?.method).isEqualTo("DELETE")
         assertThat(request.first()?.path).isEqualTo("/apis/skatteetaten.no/v1/namespaces/${ad.metadata.namespace}/applicationdeployments/${ad.metadata.name}")
@@ -128,7 +127,6 @@ class DeleteServiceTest : AbstractOpenShiftServerTest() {
 
             assertThat(deleted).isFalse()
             assertThat(errorCount).isEqualTo(1.0)
-
         }
         assertThat(request.first()?.method).isEqualTo("DELETE")
         assertThat(request.first()?.path).isEqualTo("/apis/skatteetaten.no/v1/namespaces/${ad.metadata.namespace}/applicationdeployments/${ad.metadata.name}")
@@ -136,7 +134,7 @@ class DeleteServiceTest : AbstractOpenShiftServerTest() {
 
     @Test
     fun `return not deleted for non-existing applicationDeployments`() {
-        val ad =  ApplicationDeploymentResource(
+        val ad = ApplicationDeploymentResource(
             name = "non-existing-name",
             affiliation = "non-existing-affiliation",
             ttl = Duration.ZERO,
