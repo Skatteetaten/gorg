@@ -4,8 +4,6 @@ import com.fkorotkov.kubernetes.newDeleteOptions
 import com.fkorotkov.openshift.newBuildConfig
 import com.fkorotkov.openshift.newProject
 import com.fkorotkov.openshift.metadata
-import io.fabric8.kubernetes.api.model.DeleteOptions
-import io.fabric8.kubernetes.api.model.Status
 import io.micrometer.core.instrument.MeterRegistry
 import io.micrometer.core.instrument.Tag
 import kotlinx.coroutines.runBlocking
@@ -16,7 +14,6 @@ import no.skatteetaten.aurora.kubernetes.ClientTypes
 import no.skatteetaten.aurora.kubernetes.KubernetesClient
 import no.skatteetaten.aurora.kubernetes.TargetClient
 import no.skatteetaten.aurora.kubernetes.crd.newSkatteetatenKubernetesResource
-import no.skatteetaten.aurora.kubernetes.success
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 
@@ -50,7 +47,7 @@ class DeleteService(
 
     fun deleteResource(
         item: BaseResource,
-        deleteFunction: (KubernetesClient) -> Status
+        deleteFunction: (KubernetesClient) -> Boolean
     ): Boolean {
 
         if (!deleteResources) {
@@ -63,18 +60,17 @@ class DeleteService(
 
         return try {
             deleteFunction(client).also {
-                if (it.success()) {
+                if (it) {
                     count(item, "deleted")
                     logger.info("Resource=$item deleted successfully.")
                 } else {
                     count(item, "error")
-                    logger.error("Resource=$item was not deleted. Reason = ${it.message}")
+                    logger.error("Resource=$item was not deleted.")
                 }
-            }.success()
+            }
         } catch (e: Exception) {
             logger.errorStackTraceIfDebug(
-                "Deletion of Resource=$item failed with exception=${e} message =${e.localizedMessage}",
-                e
+                "Deletion of Resource=$item failed", e
             )
             count(item, "error")
             false

@@ -89,14 +89,3 @@ data class ApplicationDeploymentResourceBuilder(val ttl: Duration = Duration.ofS
     fun build() =
             ApplicationDeploymentResource("name", "namespace", "affiliation", ttl, Instant.now().plusSeconds(100))
 }
-
-class BuildResponseBody() {
-
-    fun success(): String = """{"status":"Success"}"""
-
-    fun failure(): String = """{"status":"Failed"}"""
-
-    fun message(): String = """{"message":"message"}"""
-
-    fun empty(): String = """{}"""
-}
