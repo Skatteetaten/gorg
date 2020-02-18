@@ -121,14 +121,14 @@ class DeleteServiceTest : AbstractOpenShiftServerTest() {
     }
 
     @Test
-    fun `failed to delete expired applicationDeployments with message`() {
+    fun `delete expired applicationDeployments with empty return message`() {
         val ad = ApplicationDeploymentBuilder().build()
         val request = mockServer.execute(BuildResponseBody().message()) {
             val deleted = deleteService.deleteApplicationDeployment(ad.toResource(Instant.now()))
-            val errorCount = meterRegistry.deletedResourcesCount("status", "error")
+            val deletedCount = meterRegistry.deletedResourcesCount("status", "deleted")
 
-            assertThat(deleted).isFalse()
-            assertThat(errorCount).isEqualTo(1.0)
+            assertThat(deleted).isTrue()
+            assertThat(deletedCount).isEqualTo(1.0)
 
         }
         assertThat(request.first()?.method).isEqualTo("DELETE")
@@ -140,10 +140,10 @@ class DeleteServiceTest : AbstractOpenShiftServerTest() {
         val ad = ApplicationDeploymentBuilder().build()
         val request = mockServer.execute(BuildResponseBody().empty()) {
             val deleted = deleteService.deleteApplicationDeployment(ad.toResource(Instant.now()))
-            val errorCount = meterRegistry.deletedResourcesCount("status", "error")
+            val deletedCount = meterRegistry.deletedResourcesCount("status", "deleted")
 
-            assertThat(deleted).isFalse()
-            assertThat(errorCount).isEqualTo(1.0)
+            assertThat(deleted).isTrue()
+            assertThat(deletedCount).isEqualTo(1.0)
 
         }
         assertThat(request.first()?.method).isEqualTo("DELETE")

@@ -1,8 +1,10 @@
 package no.skatteetaten.aurora.gorg.service
 
+import com.fkorotkov.kubernetes.newDeleteOptions
 import com.fkorotkov.openshift.newBuildConfig
 import com.fkorotkov.openshift.newProject
 import com.fkorotkov.openshift.metadata
+import io.fabric8.kubernetes.api.model.DeleteOptions
 import io.fabric8.kubernetes.api.model.Status
 import io.micrometer.core.instrument.MeterRegistry
 import io.micrometer.core.instrument.Tag
@@ -32,9 +34,6 @@ class DeleteService(
         const val METRICS_DELETED_RESOURCES = "gorg_deleted_resources"
     }
 
-
-
-
     fun deleteApplicationDeployment(item: ApplicationDeploymentResource) = deleteResource(item) { client ->
         runBlocking{ client.delete(newSkatteetatenKubernetesResource<ApplicationDeployment> { metadata { name = item.name
         namespace = item.namespace } }) }
@@ -45,18 +44,9 @@ class DeleteService(
 
     fun deleteBuildConfig(item: BuildConfigResource) = deleteResource(item) { client ->
         runBlocking{ client.delete(newBuildConfig { metadata { name = item.name
-        namespace = item.namespace}}) }}
-
-
-
-/*
-    fun deleteBuildConfig(item: BuildConfigResource) = deleteResource(item) { client ->
-        client.buildConfigs()
-            .inNamespace(item.namespace)
-            .withName(item.name)
-            .withPropagationPolicy("Background")
-            .delete()
-    }*/
+        namespace = item.namespace}}, newDeleteOptions {
+            propagationPolicy = "Background"
+        }) }}
 
     fun deleteResource(
         item: BaseResource,
