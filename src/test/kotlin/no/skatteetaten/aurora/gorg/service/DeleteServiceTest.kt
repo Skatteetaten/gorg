@@ -40,7 +40,9 @@ class DeleteServiceTest : AbstractOpenShiftServerTest() {
             assertThat(deletedCount).isEqualTo(1.0)
         }
         assertThat(request.first()?.method).isEqualTo("DELETE")
-        assertThat(request.first()?.path).isEqualTo("/apis/project.openshift.io/v1/projects/${project.metadata.name}")
+        assertThat(request.first()?.path).isEqualTo(
+            "/apis/project.openshift.io/v1/" +
+                "projects/${project.metadata.name}")
     }
 
     @Test
@@ -69,7 +71,10 @@ class DeleteServiceTest : AbstractOpenShiftServerTest() {
             assertThat(deletedMetrics).isEqualTo(1.0)
         }
         assertThat(request.first()?.method).isEqualTo("DELETE")
-        assertThat(request.first()?.path).isEqualTo("/apis/build.openshift.io/v1/namespaces/${buildConfig.metadata.namespace}/buildconfigs/${buildConfig.metadata.name}")
+        assertThat(request.first()?.path).isEqualTo(
+            "/apis/build.openshift.io/v1/" +
+                "namespaces/${buildConfig.metadata.namespace}" +
+                "/buildconfigs/${buildConfig.metadata.name}")
     }
 
     @Test
@@ -101,7 +106,10 @@ class DeleteServiceTest : AbstractOpenShiftServerTest() {
             assertThat(deletedCount).isEqualTo(1.0)
         }
         assertThat(request.first()?.method).isEqualTo("DELETE")
-        assertThat(request.first()?.path).isEqualTo("/apis/skatteetaten.no/v1/namespaces/${ad.metadata.namespace}/applicationdeployments/${ad.metadata.name}")
+        assertThat(request.first()?.path).isEqualTo(
+            "/apis/skatteetaten.no/v1/" +
+                "namespaces/${ad.metadata.namespace}/" +
+                "applicationdeployments/${ad.metadata.name}")
     }
 
     @Test
@@ -115,7 +123,10 @@ class DeleteServiceTest : AbstractOpenShiftServerTest() {
             assertThat(errorCount).isEqualTo(1.0)
         }
         assertThat(request.first()?.method).isEqualTo("DELETE")
-        assertThat(request.first()?.path).isEqualTo("/apis/skatteetaten.no/v1/namespaces/${ad.metadata.namespace}/applicationdeployments/${ad.metadata.name}")
+        assertThat(request.first()?.path).isEqualTo(
+            "/apis/skatteetaten.no/v1/" +
+                "namespaces/${ad.metadata.namespace}/" +
+                "applicationdeployments/${ad.metadata.name}")
     }
 
     @Test
@@ -129,7 +140,10 @@ class DeleteServiceTest : AbstractOpenShiftServerTest() {
             assertThat(errorCount).isEqualTo(1.0)
         }
         assertThat(request.first()?.method).isEqualTo("DELETE")
-        assertThat(request.first()?.path).isEqualTo("/apis/skatteetaten.no/v1/namespaces/${ad.metadata.namespace}/applicationdeployments/${ad.metadata.name}")
+        assertThat(request.first()?.path).isEqualTo(
+            "/apis/skatteetaten.no/v1/" +
+                "namespaces/${ad.metadata.namespace}/" +
+                "applicationdeployments/${ad.metadata.name}")
     }
 
     @Test
@@ -150,7 +164,10 @@ class DeleteServiceTest : AbstractOpenShiftServerTest() {
             assertThat(deletedCount).isEqualTo(1.0)
         }
         assertThat(request.first()?.method).isEqualTo("DELETE")
-        assertThat(request.first()?.path).isEqualTo("/apis/skatteetaten.no/v1/namespaces/${ad.namespace}/applicationdeployments/${ad.name}")
+        assertThat(request.first()?.path).isEqualTo(
+            "/apis/skatteetaten.no/v1/" +
+                "namespaces/${ad.namespace}/" +
+                "applicationdeployments/${ad.name}")
     }
 
     @Test

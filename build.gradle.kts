@@ -1,7 +1,7 @@
 plugins {
     id("org.jetbrains.kotlin.jvm") version "1.3.61"
     id("org.jetbrains.kotlin.plugin.spring") version "1.3.61"
-    id("org.jlleitschuh.gradle.ktlint") version "9.1.1"
+    id("org.jlleitschuh.gradle.ktlint") version "9.2.1"
     id("org.sonarqube") version "2.8"
     id("org.springframework.boot") version "2.2.4.RELEASE"
     id("org.asciidoctor.convert") version "2.4.0"
@@ -10,7 +10,7 @@ plugins {
     id("com.github.ben-manes.versions") version "0.27.0"
     id("se.patrikerdes.use-latest-versions") version "0.2.13"
 
-    id("no.skatteetaten.gradle.aurora") version "3.4.5"
+    id("no.skatteetaten.gradle.aurora") version "3.4.6"
 }
 
 extra["jackson-bom.version"] = "2.10.2"
