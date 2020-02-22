@@ -17,6 +17,7 @@ fun newApplicationDeployment(block: ApplicationDeployment.() -> Unit = {}): Appl
     return instance
 }
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 @JsonPropertyOrder(value = ["apiVersion", "kind", "metadata", "spec"])
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonDeserialize(using = JsonDeserializer.None::class)

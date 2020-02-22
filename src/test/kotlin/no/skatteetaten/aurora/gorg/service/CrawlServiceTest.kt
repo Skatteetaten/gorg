@@ -5,12 +5,14 @@ import assertk.assertions.hasSize
 import assertk.assertions.isEqualTo
 import assertk.assertions.isGreaterThan
 import assertk.assertions.isNotNull
+import io.fabric8.kubernetes.api.model.KubernetesList
+import io.fabric8.kubernetes.internal.KubernetesDeserializer
 import io.fabric8.openshift.api.model.BuildConfigList
 import io.fabric8.openshift.api.model.ProjectList
 import no.skatteetaten.aurora.gorg.ApplicationDeploymentBuilder
 import no.skatteetaten.aurora.gorg.BuildConfigDataBuilder
 import no.skatteetaten.aurora.gorg.ProjectDataBuilder
-import no.skatteetaten.aurora.gorg.model.ApplicationDeploymentList
+import no.skatteetaten.aurora.gorg.model.ApplicationDeployment
 import no.skatteetaten.aurora.mockmvc.extensions.mockwebserver.execute
 import org.junit.jupiter.api.Test
 import org.springframework.security.test.context.support.WithMockUser
@@ -55,8 +57,22 @@ class CrawlServiceTest : AbstractOpenShiftServerTest() {
 
     @Test
     fun `Find temporary applicationDeployments`() {
+        KubernetesDeserializer.registerCustomKind(
+            "skatteetaten.no/v1",
+            "ApplicationDeploymentList",
+            KubernetesList::class.java
+        )
+
+        KubernetesDeserializer.registerCustomKind(
+            "skatteetaten.no/v1",
+            "ApplicationDeployment",
+            ApplicationDeployment::class.java
+        )
         val ad = ApplicationDeploymentBuilder().build()
-        mockServer.execute(ApplicationDeploymentList(items = listOf(ad))) {
+        val list = KubernetesList().apply {
+            items = listOf(ad)
+        }
+        mockServer.execute(list) {
             val service = KubernetesService(mockClient)
             val applications = service.findTemporaryApplicationDeployments(Instant.now())
             assertThat(applications).hasSize(1)

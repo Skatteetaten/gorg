@@ -1,9 +1,8 @@
 package no.skatteetaten.aurora.gorg.service
 
-import com.fkorotkov.kubernetes.newObjectMeta
 import com.fkorotkov.openshift.metadata
 import com.fkorotkov.openshift.newBuildConfig
-import io.fabric8.openshift.api.model.Project
+import com.fkorotkov.openshift.newProject
 import kotlinx.coroutines.runBlocking
 import no.skatteetaten.aurora.gorg.extensions.REMOVE_AFTER_LABEL
 import no.skatteetaten.aurora.gorg.extensions.TERMINATING_PHASE
@@ -23,7 +22,7 @@ class KubernetesService(
 ) {
 
     fun findTemporaryProjects(now: Instant = Instant.now()): List<ProjectResource> = runBlocking {
-        kubernetesClient.getMany<Project>(newObjectMeta { labels = mapOf(REMOVE_AFTER_LABEL to "") })
+        kubernetesClient.getMany(newProject { metadata { labels = newLabel(REMOVE_AFTER_LABEL) } })
             .filter { it.status.phase != TERMINATING_PHASE }
     }.map { it.toResource(now) }
 
