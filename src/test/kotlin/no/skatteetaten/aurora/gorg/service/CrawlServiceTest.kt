@@ -7,7 +7,6 @@ import assertk.assertions.isGreaterThan
 import assertk.assertions.isNotNull
 import io.fabric8.openshift.api.model.BuildConfigList
 import io.fabric8.openshift.api.model.ProjectList
-import java.time.Instant
 import no.skatteetaten.aurora.gorg.ApplicationDeploymentBuilder
 import no.skatteetaten.aurora.gorg.BuildConfigDataBuilder
 import no.skatteetaten.aurora.gorg.ProjectDataBuilder
@@ -15,13 +14,13 @@ import no.skatteetaten.aurora.gorg.model.ApplicationDeploymentList
 import no.skatteetaten.aurora.mockmvc.extensions.mockwebserver.execute
 import org.junit.jupiter.api.Test
 import org.springframework.security.test.context.support.WithMockUser
+import java.time.Instant
 
 @WithMockUser
 class CrawlServiceTest : AbstractOpenShiftServerTest() {
 
     @Test
     fun `Find temporary buildConfigs`() {
-
         val bc = BuildConfigDataBuilder().build()
         val list = BuildConfigList().apply {
             items = listOf(bc)

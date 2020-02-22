@@ -63,7 +63,7 @@ class DeleteServiceTest : AbstractOpenShiftServerTest() {
     @Test
     fun `Delete existing buildConfig`() {
         val buildConfig = BuildConfigDataBuilder().build()
-        val request = mockServer.execute(200) {
+        val request = mockServer.execute(200 to "") {
             val deleted = deleteService.deleteBuildConfig(buildConfig.toResource(Instant.now()))
             val deletedMetrics = meterRegistry.deletedResourcesCount("status", "deleted")
 
