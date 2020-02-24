@@ -85,3 +85,8 @@ data class ApplicationDeploymentResourceBuilder(val ttl: Duration = Duration.ofS
     fun build() =
         ApplicationDeploymentResource("name", "namespace", "affiliation", ttl, Instant.now().plusSeconds(100))
 }
+
+data class StatusResourceBuilder(val status: String) {
+    fun build() =
+        """{"kind":"Status","apiVersion":"v1","metadata":{},"status":"$status"}"""
+}

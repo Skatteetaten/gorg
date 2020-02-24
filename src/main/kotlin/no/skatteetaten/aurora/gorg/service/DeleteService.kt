@@ -3,6 +3,7 @@ package no.skatteetaten.aurora.gorg.service
 import com.fkorotkov.openshift.metadata
 import com.fkorotkov.openshift.newBuildConfig
 import com.fkorotkov.openshift.newProject
+import io.fabric8.kubernetes.api.model.Status
 import io.micrometer.core.instrument.MeterRegistry
 import io.micrometer.core.instrument.Tag
 import kotlinx.coroutines.runBlocking
@@ -31,7 +32,7 @@ class DeleteService(
 
     fun deleteApplicationDeployment(item: ApplicationDeploymentResource) = deleteResource(item) { client ->
         runBlocking {
-            client.deleteForeground(newApplicationDeployment {
+            client.deleteBackground(newApplicationDeployment {
                 metadata {
                     name = item.name
                     namespace = item.namespace
@@ -41,7 +42,7 @@ class DeleteService(
     }
 
     fun deleteProject(item: ProjectResource) = deleteResource(item) { client ->
-        runBlocking { client.deleteForeground(newProject { metadata { name = item.name } }) }
+        runBlocking { client.deleteBackground(newProject { metadata { name = item.name } }) }
     }
 
     fun deleteBuildConfig(item: BuildConfigResource) = deleteResource(item) { client ->
@@ -57,9 +58,8 @@ class DeleteService(
 
     fun deleteResource(
         item: BaseResource,
-        deleteFunction: (KubernetesCoroutinesClient) -> Unit
+        deleteFunction: (KubernetesCoroutinesClient) -> Status
     ): Boolean {
-
         if (!deleteResources) {
             logger.info(
                 "deleteResources=false. Resource=$item. Will be deleted once deleteResource flag is true"
@@ -68,20 +68,27 @@ class DeleteService(
             return false
         }
 
+        var status = false
         return try {
             deleteFunction(client).also {
-                if (it == Unit) {
+                status = if (it.status == "Success") {
                     count(item, "deleted")
                     logger.info("Resource=$item deleted successfully.")
+                    true
                 } else {
                     count(item, "error")
-                    logger.error("Resource=$item was not deleted.")
+                    if (it.status == "Conflict") {
+                        logger.error("Resource=$item in conflict with message=${it.message}")
+                    } else {
+                        logger.error("Resource=$item was not deleted.")
+                    }
+                    false
                 }
             }
-            true
+            status
         } catch (e: Exception) {
             logger.errorStackTraceIfDebug(
-                "Deletion of Resource=$item failed it=$client", e
+                "Deletion of Resource=$item", e
             )
             count(item, "error")
             false
