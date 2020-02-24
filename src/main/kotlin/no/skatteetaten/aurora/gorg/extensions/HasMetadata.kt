@@ -10,5 +10,5 @@ const val TERMINATING_PHASE = "Terminating"
 fun HasMetadata.removalTime(): Instant {
     return this.metadata.labels[REMOVE_AFTER_LABEL]?.let {
         Instant.ofEpochSecond(it.toLong())
-    } ?: throw IllegalStateException("removeAfter is not set or valid timstamp $this , $this.metadata.labels[REMOVE_AFTER_LABEL]? ")
+    } ?: throw IllegalStateException("removeAfter is not set or valid timestamp")
 }
