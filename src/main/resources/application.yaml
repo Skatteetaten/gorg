@@ -23,7 +23,7 @@ gorg:
         resources: false
 
 kubernetes:
-    tokenLocation: '/home/m98415/token'
+    tokenLocation: '/token'
     url: 'https://utv-master.paas.skead.no:8443'
 
 logging:

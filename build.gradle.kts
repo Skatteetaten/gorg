@@ -16,7 +16,7 @@ plugins {
 extra["jackson-bom.version"] = "2.10.2"
 
 dependencies {
-    implementation("no.skatteetaten.aurora.kubernetes:kubernetes-reactor-coroutines-client:AOS-4178-11")
+    implementation("no.skatteetaten.aurora.kubernetes:kubernetes-reactor-coroutines-client:1.2.2")
     testImplementation("com.fkorotkov:kubernetes-dsl:3.0")
 
     implementation("org.springframework.boot:spring-boot-starter-security")
