@@ -9,7 +9,7 @@ import no.skatteetaten.aurora.gorg.ApplicationDeploymentResourceBuilder
 import no.skatteetaten.aurora.gorg.BuildConfigResourceBuilder
 import no.skatteetaten.aurora.gorg.ProjectResourceBuilder
 import no.skatteetaten.aurora.gorg.service.DeleteService
-import no.skatteetaten.aurora.gorg.service.OpenShiftService
+import no.skatteetaten.aurora.gorg.service.KubernetesService
 import no.skatteetaten.aurora.mockmvc.extensions.Path
 import no.skatteetaten.aurora.mockmvc.extensions.delete
 import no.skatteetaten.aurora.mockmvc.extensions.get
@@ -36,14 +36,14 @@ import org.springframework.test.web.servlet.MockMvc
 class CrawlControllerTest(@Autowired val mockMvc: MockMvc) {
 
     @MockBean
-    private lateinit var openShiftService: OpenShiftService
+    private lateinit var kubernetesService: KubernetesService
 
     @MockBean
     private lateinit var deleteService: DeleteService
 
     @Test
     fun `List projects`() {
-        given(openShiftService.findTemporaryProjects(anyOrNull()))
+        given(kubernetesService.findTemporaryProjects(anyOrNull()))
             .willReturn(listOf(ProjectResourceBuilder().build()))
 
         mockMvc.get(Path("/api/projects")) {
@@ -53,7 +53,7 @@ class CrawlControllerTest(@Autowired val mockMvc: MockMvc) {
 
     @Test
     fun `Delete projects with negative ttl`() {
-        given(openShiftService.findTemporaryProjects(anyOrNull()))
+        given(kubernetesService.findTemporaryProjects(anyOrNull()))
             .willReturn(
                 listOf(
                     ProjectResourceBuilder(ttl = Duration.ofSeconds(-10)).build(),
@@ -69,7 +69,7 @@ class CrawlControllerTest(@Autowired val mockMvc: MockMvc) {
 
     @Test
     fun `Get build configs`() {
-        given(openShiftService.findTemporaryBuildConfigs(anyOrNull()))
+        given(kubernetesService.findTemporaryBuildConfigs(anyOrNull()))
             .willReturn(listOf(BuildConfigResourceBuilder().build()))
 
         mockMvc.get(Path("/api/buildConfigs")) {
@@ -79,7 +79,7 @@ class CrawlControllerTest(@Autowired val mockMvc: MockMvc) {
 
     @Test
     fun `Delete build configs with negative ttl`() {
-        given(openShiftService.findTemporaryBuildConfigs(anyOrNull()))
+        given(kubernetesService.findTemporaryBuildConfigs(anyOrNull()))
             .willReturn(
                 listOf(
                     BuildConfigResourceBuilder(ttl = Duration.ofSeconds(-10)).build(),
@@ -95,7 +95,7 @@ class CrawlControllerTest(@Autowired val mockMvc: MockMvc) {
 
     @Test
     fun `Get application deployments`() {
-        given(openShiftService.findTemporaryApplicationDeployments(anyOrNull()))
+        given(kubernetesService.findTemporaryApplicationDeployments(anyOrNull()))
             .willReturn(listOf(ApplicationDeploymentResourceBuilder().build()))
 
         mockMvc.get(Path("/api/applicationDeployments")) {
@@ -105,7 +105,7 @@ class CrawlControllerTest(@Autowired val mockMvc: MockMvc) {
 
     @Test
     fun `Delete application deployments with negative ttl`() {
-        given(openShiftService.findTemporaryApplicationDeployments(anyOrNull()))
+        given(kubernetesService.findTemporaryApplicationDeployments(anyOrNull()))
             .willReturn(
                 listOf(
                     ApplicationDeploymentResourceBuilder(ttl = Duration.ofSeconds(-10)).build(),

@@ -22,6 +22,10 @@ gorg:
     delete:
         resources: false
 
+kubernetes:
+    tokenLocation: '/token'
+    url: 'https://utv-master.paas.skead.no:8443'
+
 logging:
     pattern:
       console: "%d [%-9.9thread] %highlight(%-5level) %cyan(%logger:%L) %X - %msg %n%rEx{full}"

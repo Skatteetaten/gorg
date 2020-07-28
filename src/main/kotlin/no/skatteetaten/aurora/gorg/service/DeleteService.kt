@@ -1,13 +1,18 @@
 package no.skatteetaten.aurora.gorg.service
 
-import io.fabric8.kubernetes.client.KubernetesClientException
-import io.fabric8.openshift.client.DefaultOpenShiftClient
-import io.fabric8.openshift.client.OpenShiftClient
+import com.fkorotkov.openshift.metadata
+import com.fkorotkov.openshift.newBuildConfig
+import com.fkorotkov.openshift.newProject
+import io.fabric8.kubernetes.api.model.Status
 import io.micrometer.core.instrument.MeterRegistry
 import io.micrometer.core.instrument.Tag
+import kotlinx.coroutines.runBlocking
 import mu.KotlinLogging
-import no.skatteetaten.aurora.gorg.extensions.deleteApplicationDeployment
 import no.skatteetaten.aurora.gorg.extensions.errorStackTraceIfDebug
+import no.skatteetaten.aurora.gorg.model.newApplicationDeployment
+import no.skatteetaten.aurora.kubernetes.ClientTypes
+import no.skatteetaten.aurora.kubernetes.KubernetesCoroutinesClient
+import no.skatteetaten.aurora.kubernetes.TargetClient
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 
@@ -15,7 +20,8 @@ private val logger = KotlinLogging.logger {}
 
 @Service
 class DeleteService(
-    val client: OpenShiftClient,
+    @TargetClient(ClientTypes.SERVICE_ACCOUNT)
+    val client: KubernetesCoroutinesClient,
     val meterRegistry: MeterRegistry,
     @Value("\${gorg.delete.resources}") val deleteResources: Boolean
 ) {
@@ -25,26 +31,35 @@ class DeleteService(
     }
 
     fun deleteApplicationDeployment(item: ApplicationDeploymentResource) = deleteResource(item) { client ->
-        (client as DefaultOpenShiftClient).deleteApplicationDeployment(item.namespace, item.name)
+        runBlocking {
+            client.deleteBackground(newApplicationDeployment {
+                metadata {
+                    name = item.name
+                    namespace = item.namespace
+                }
+            })
+        }
     }
 
     fun deleteProject(item: ProjectResource) = deleteResource(item) { client ->
-        client.projects().withName(item.name).delete()
+        runBlocking { client.deleteBackground(newProject { metadata { name = item.name } }) }
     }
 
     fun deleteBuildConfig(item: BuildConfigResource) = deleteResource(item) { client ->
-        client.buildConfigs()
-            .inNamespace(item.namespace)
-            .withName(item.name)
-            .withPropagationPolicy("Background")
-            .delete()
+        runBlocking {
+            client.deleteBackground(newBuildConfig {
+                metadata {
+                    name = item.name
+                    namespace = item.namespace
+                }
+            })
+        }
     }
 
     fun deleteResource(
         item: BaseResource,
-        deleteFunction: (OpenShiftClient) -> Boolean
+        deleteFunction: (KubernetesCoroutinesClient) -> Status
     ): Boolean {
-
         if (!deleteResources) {
             logger.info(
                 "deleteResources=false. Resource=$item. Will be deleted once deleteResource flag is true"
@@ -53,20 +68,27 @@ class DeleteService(
             return false
         }
 
+        var status = false
         return try {
             deleteFunction(client).also {
-                if (it) {
+                status = if (it.status == "Success") {
                     count(item, "deleted")
                     logger.info("Resource=$item deleted successfully.")
+                    true
                 } else {
                     count(item, "error")
-                    logger.info("Resource=$item was not deleted.")
+                    if (it.status == "Conflict") {
+                        logger.error("Resource=$item in conflict with message=${it.message}")
+                    } else {
+                        logger.error("Resource=$item was not deleted.")
+                    }
+                    false
                 }
             }
-        } catch (e: KubernetesClientException) {
+            status
+        } catch (e: Exception) {
             logger.errorStackTraceIfDebug(
-                "Deletion of Resource=$item failed with exception=${e.code} message=${e.localizedMessage}",
-                e
+                "Deletion of Resource=$item", e
             )
             count(item, "error")
             false

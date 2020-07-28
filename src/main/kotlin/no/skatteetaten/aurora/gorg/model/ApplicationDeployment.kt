@@ -2,41 +2,34 @@ package no.skatteetaten.aurora.gorg.model
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonInclude
-import io.fabric8.kubernetes.api.model.ObjectMeta
+import com.fasterxml.jackson.annotation.JsonPropertyOrder
+import com.fasterxml.jackson.databind.JsonDeserializer
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize
+import no.skatteetaten.aurora.kubernetes.crd.SkatteetatenCRD
 import java.time.Duration
 import java.time.Instant
-import no.skatteetaten.aurora.gorg.extensions.REMOVE_AFTER_LABEL
-import no.skatteetaten.aurora.gorg.service.ApplicationDeploymentResource
 
-@JsonIgnoreProperties(ignoreUnknown = true)
-@JsonInclude(JsonInclude.Include.NON_NULL)
-data class ApplicationDeploymentList(
-    val items: List<ApplicationDeployment> = emptyList()
-)
-
-@JsonIgnoreProperties(ignoreUnknown = true)
-@JsonInclude(JsonInclude.Include.NON_NULL)
-data class ApplicationDeployment(
-    val kind: String = "ApplicationDeployment",
-    val metadata: ObjectMeta,
-    val apiVersion: String = "skatteetaten.no/v1"
-) {
-
-    fun toResource(now: Instant): ApplicationDeploymentResource {
-        val removalTime = this.removalTime()
-
-        return ApplicationDeploymentResource(
-            name = this.metadata.name,
-            namespace = this.metadata.namespace,
-            affiliation = this.metadata.labels["affiliation"]?.let { it }.toString(),
-            ttl = Duration.between(now, removalTime),
-            removalTime = removalTime
-        )
-    }
-
-    fun removalTime(): Instant {
-        return this.metadata.labels[REMOVE_AFTER_LABEL]?.let {
-            Instant.ofEpochSecond(it.toLong())
-        } ?: throw IllegalStateException("removeAfter is not set or valid timstamp")
-    }
+fun newApplicationDeployment(block: ApplicationDeployment.() -> Unit = {}): ApplicationDeployment {
+    val instance = ApplicationDeployment()
+    instance.block()
+    return instance
 }
+
+@JsonIgnoreProperties(ignoreUnknown = true)
+@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonPropertyOrder(value = ["apiVersion", "kind", "metadata", "spec"])
+@JsonDeserialize(using = JsonDeserializer.None::class)
+class ApplicationDeployment(
+    var spec: ApplicationDeploymentSpec = ApplicationDeploymentSpec()
+) : SkatteetatenCRD("ApplicationDeployment")
+
+@JsonIgnoreProperties(ignoreUnknown = true)
+@JsonInclude(JsonInclude.Include.NON_NULL)
+
+data class ApplicationDeploymentSpec(
+    val name: String = "",
+    val namespace: String = "",
+    val affiliation: String? = null,
+    val ttl: Duration? = null,
+    val removalTime: Instant? = null
+)

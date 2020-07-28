@@ -1,6 +1,9 @@
 package no.skatteetaten.aurora.gorg.service
 
-import io.fabric8.openshift.client.DefaultOpenShiftClient
+import no.skatteetaten.aurora.kubernetes.HttpClientTimeoutConfiguration
+import no.skatteetaten.aurora.kubernetes.KubernetesCoroutinesClient
+import no.skatteetaten.aurora.kubernetes.KubnernetesClientConfiguration
+import no.skatteetaten.aurora.kubernetes.RetryConfiguration
 import okhttp3.mockwebserver.MockWebServer
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.TestInstance
@@ -9,7 +12,14 @@ import org.junit.jupiter.api.TestInstance
 open class AbstractOpenShiftServerTest {
 
     protected val mockServer = MockWebServer()
-    protected var mockClient = DefaultOpenShiftClient(mockServer.url("/").toString())
+    private val url = mockServer.url("/")
+    private val config = KubnernetesClientConfiguration(
+        retry = RetryConfiguration(0),
+        timeout = HttpClientTimeoutConfiguration(),
+        url = url.toString()
+    )
+    private val client = config.createTestClient("test-token")
+    protected var mockClient = KubernetesCoroutinesClient(client)
 
     @AfterEach
     fun tearDown() {
