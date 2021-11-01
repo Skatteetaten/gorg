@@ -2,7 +2,7 @@ package no.skatteetaten.aurora.gorg.service
 
 import no.skatteetaten.aurora.kubernetes.HttpClientTimeoutConfiguration
 import no.skatteetaten.aurora.kubernetes.KubernetesCoroutinesClient
-import no.skatteetaten.aurora.kubernetes.KubnernetesClientConfiguration
+import no.skatteetaten.aurora.kubernetes.KubernetesConfiguration
 import no.skatteetaten.aurora.kubernetes.RetryConfiguration
 import okhttp3.mockwebserver.MockWebServer
 import org.junit.jupiter.api.AfterEach
@@ -13,7 +13,7 @@ open class AbstractOpenShiftServerTest {
 
     protected val mockServer = MockWebServer()
     private val url = mockServer.url("/")
-    private val config = KubnernetesClientConfiguration(
+    private val config = KubernetesConfiguration(
         retry = RetryConfiguration(0),
         timeout = HttpClientTimeoutConfiguration(),
         url = url.toString()

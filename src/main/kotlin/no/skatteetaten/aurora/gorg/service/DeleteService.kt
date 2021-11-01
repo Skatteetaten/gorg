@@ -10,9 +10,9 @@ import kotlinx.coroutines.runBlocking
 import mu.KotlinLogging
 import no.skatteetaten.aurora.gorg.extensions.errorStackTraceIfDebug
 import no.skatteetaten.aurora.gorg.model.newApplicationDeployment
-import no.skatteetaten.aurora.kubernetes.ClientTypes
+import no.skatteetaten.aurora.kubernetes.config.ClientTypes
 import no.skatteetaten.aurora.kubernetes.KubernetesCoroutinesClient
-import no.skatteetaten.aurora.kubernetes.TargetClient
+import no.skatteetaten.aurora.kubernetes.config.TargetClient
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 
@@ -32,12 +32,14 @@ class DeleteService(
 
     fun deleteApplicationDeployment(item: ApplicationDeploymentResource) = deleteResource(item) { client ->
         runBlocking {
-            client.deleteBackground(newApplicationDeployment {
-                metadata {
-                    name = item.name
-                    namespace = item.namespace
+            client.deleteBackground(
+                newApplicationDeployment {
+                    metadata {
+                        name = item.name
+                        namespace = item.namespace
+                    }
                 }
-            })
+            )
         }
     }
 
@@ -47,12 +49,14 @@ class DeleteService(
 
     fun deleteBuildConfig(item: BuildConfigResource) = deleteResource(item) { client ->
         runBlocking {
-            client.deleteBackground(newBuildConfig {
-                metadata {
-                    name = item.name
-                    namespace = item.namespace
+            client.deleteBackground(
+                newBuildConfig {
+                    metadata {
+                        name = item.name
+                        namespace = item.namespace
+                    }
                 }
-            })
+            )
         }
     }
 
