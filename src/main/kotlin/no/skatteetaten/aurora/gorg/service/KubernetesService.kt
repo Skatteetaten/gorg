@@ -8,9 +8,9 @@ import no.skatteetaten.aurora.gorg.extensions.REMOVE_AFTER_LABEL
 import no.skatteetaten.aurora.gorg.extensions.TERMINATING_PHASE
 import no.skatteetaten.aurora.gorg.extensions.toResource
 import no.skatteetaten.aurora.gorg.model.newApplicationDeployment
-import no.skatteetaten.aurora.kubernetes.ClientTypes
+import no.skatteetaten.aurora.kubernetes.config.ClientTypes
 import no.skatteetaten.aurora.kubernetes.KubernetesCoroutinesClient
-import no.skatteetaten.aurora.kubernetes.TargetClient
+import no.skatteetaten.aurora.kubernetes.config.TargetClient
 import no.skatteetaten.aurora.kubernetes.newLabel
 import org.springframework.stereotype.Service
 import java.time.Instant
@@ -33,8 +33,10 @@ class KubernetesService(
 
     fun findTemporaryApplicationDeployments(now: Instant = Instant.now()): List<ApplicationDeploymentResource> =
         runBlocking {
-            kubernetesClient.getMany(newApplicationDeployment {
-                metadata { labels = newLabel(REMOVE_AFTER_LABEL) }
-            })
+            kubernetesClient.getMany(
+                newApplicationDeployment {
+                    metadata { labels = newLabel(REMOVE_AFTER_LABEL) }
+                }
+            )
         }.map { it.toResource(now) }
 }

@@ -44,7 +44,8 @@ class DeleteServiceTest : AbstractOpenShiftServerTest() {
         assertThat(request.first()?.method).isEqualTo("DELETE")
         assertThat(request.first()?.path).isEqualTo(
             "/apis/project.openshift.io/v1/" +
-                "projects/${project.metadata.name}")
+                "projects/${project.metadata.name}"
+        )
     }
 
     @Test
@@ -56,7 +57,8 @@ class DeleteServiceTest : AbstractOpenShiftServerTest() {
             val deleted = deleteService.deleteProject(
                 ProjectResource(
                     name = "non-existing-name",
-                    affiliation = "non-existing-affiliation", ttl = Duration.ZERO, removalTime = Instant.now())
+                    affiliation = "non-existing-affiliation", ttl = Duration.ZERO, removalTime = Instant.now()
+                )
             )
 
             assertThat(deleted).isFalse()
@@ -78,7 +80,8 @@ class DeleteServiceTest : AbstractOpenShiftServerTest() {
         assertThat(request.first()?.path).isEqualTo(
             "/apis/build.openshift.io/v1/" +
                 "namespaces/${buildConfig.metadata.namespace}" +
-                "/buildconfigs/${buildConfig.metadata.name}")
+                "/buildconfigs/${buildConfig.metadata.name}"
+        )
     }
 
     @Test
@@ -113,7 +116,8 @@ class DeleteServiceTest : AbstractOpenShiftServerTest() {
         assertThat(request.first()?.path).isEqualTo(
             "/apis/skatteetaten.no/v1/" +
                 "namespaces/${ad.metadata.namespace}/" +
-                "applicationdeployments/${ad.metadata.name}")
+                "applicationdeployments/${ad.metadata.name}"
+        )
     }
 
     @Test
@@ -131,7 +135,8 @@ class DeleteServiceTest : AbstractOpenShiftServerTest() {
         assertThat(request.first()?.path).isEqualTo(
             "/apis/skatteetaten.no/v1/" +
                 "namespaces/${ad.metadata.namespace}/" +
-                "applicationdeployments/${ad.metadata.name}")
+                "applicationdeployments/${ad.metadata.name}"
+        )
     }
 
     @Test
@@ -149,7 +154,8 @@ class DeleteServiceTest : AbstractOpenShiftServerTest() {
         assertThat(request.first()?.path).isEqualTo(
             "/apis/skatteetaten.no/v1/" +
                 "namespaces/${ad.metadata.namespace}/" +
-                "applicationdeployments/${ad.metadata.name}")
+                "applicationdeployments/${ad.metadata.name}"
+        )
     }
 
     @Test
@@ -174,7 +180,8 @@ class DeleteServiceTest : AbstractOpenShiftServerTest() {
         assertThat(request.first()?.path).isEqualTo(
             "/apis/skatteetaten.no/v1/" +
                 "namespaces/${ad.namespace}/" +
-                "applicationdeployments/${ad.name}")
+                "applicationdeployments/${ad.name}"
+        )
     }
 
     @Test

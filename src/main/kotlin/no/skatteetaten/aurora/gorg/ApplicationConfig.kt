@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import io.fabric8.kubernetes.api.model.KubernetesList
 import io.fabric8.kubernetes.internal.KubernetesDeserializer
 import no.skatteetaten.aurora.gorg.model.ApplicationDeployment
-import no.skatteetaten.aurora.kubernetes.KubernetesClientConfig
+import no.skatteetaten.aurora.kubernetes.config.KubernetesClientConfig
 import org.springframework.beans.factory.config.BeanPostProcessor
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -37,12 +37,14 @@ class ApplicationConfig : BeanPostProcessor {
         KubernetesDeserializer.registerCustomKind(
             "skatteetaten.no/v1",
             "ApplicationDeploymentList",
-            KubernetesList::class.java)
+            KubernetesList::class.java
+        )
 
         KubernetesDeserializer.registerCustomKind(
             "skatteetaten.no/v1",
             "ApplicationDeployment",
-            ApplicationDeployment::class.java)
+            ApplicationDeployment::class.java
+        )
 
         return super.postProcessAfterInitialization(bean, beanName)
     }
