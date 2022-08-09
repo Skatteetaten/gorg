@@ -5,8 +5,8 @@ import java.time.Duration
 import java.time.Instant
 import no.skatteetaten.aurora.gorg.service.ProjectResource
 
-fun Project.toResource(now: Instant): ProjectResource {
-    val removalTime = this.removalTime()
+fun Project.toResource(now: Instant): ProjectResource? {
+    val removalTime = this.removalTime() ?: return null
 
     return ProjectResource(
         name = this.metadata.name,

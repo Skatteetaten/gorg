@@ -35,7 +35,7 @@ class DeleteServiceTest : AbstractOpenShiftServerTest() {
         val project = ProjectDataBuilder().build()
         val status = StatusResourceBuilder("Success").build()
         val request = mockServer.execute(status) {
-            val deleted = deleteService.deleteProject(project.toResource(Instant.now()))
+            val deleted = deleteService.deleteProject(project.toResource(Instant.now())!!)
             val deletedCount = meterRegistry.deletedResourcesCount("status", "deleted")
 
             assertThat(deleted).isTrue()
@@ -70,7 +70,7 @@ class DeleteServiceTest : AbstractOpenShiftServerTest() {
         val buildConfig = BuildConfigDataBuilder().build()
         val status = StatusResourceBuilder("Success").build()
         val request = mockServer.execute(status) {
-            val deleted = deleteService.deleteBuildConfig(buildConfig.toResource(Instant.now()))
+            val deleted = deleteService.deleteBuildConfig(buildConfig.toResource(Instant.now())!!)
             val deletedMetrics = meterRegistry.deletedResourcesCount("status", "deleted")
 
             assertThat(deleted).isTrue()
@@ -188,7 +188,7 @@ class DeleteServiceTest : AbstractOpenShiftServerTest() {
     fun `return skipped if deleteResource is false`() {
         val service = DeleteService(mockClient, meterRegistry, false)
         val buildConfig = BuildConfigDataBuilder().build()
-        val deleted = service.deleteBuildConfig(buildConfig.toResource(Instant.now()))
+        val deleted = service.deleteBuildConfig(buildConfig.toResource(Instant.now())!!)
         val deletedCount = meterRegistry.deletedResourcesCount("status", "skipped")
 
         assertThat(deleted).isFalse()

@@ -5,8 +5,8 @@ import no.skatteetaten.aurora.gorg.service.BuildConfigResource
 import java.time.Duration
 import java.time.Instant
 
-fun BuildConfig.toResource(now: Instant): BuildConfigResource {
-    val removalTime = this.removalTime()
+fun BuildConfig.toResource(now: Instant): BuildConfigResource? {
+    val removalTime = this.removalTime() ?: return null
 
     return BuildConfigResource(
         name = this.metadata.name,

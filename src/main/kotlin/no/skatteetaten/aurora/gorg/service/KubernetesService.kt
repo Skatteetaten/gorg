@@ -14,22 +14,27 @@ import no.skatteetaten.aurora.kubernetes.config.TargetClient
 import no.skatteetaten.aurora.kubernetes.newLabel
 import org.springframework.stereotype.Service
 import java.time.Instant
+import io.micrometer.core.instrument.MeterRegistry
+import io.micrometer.core.instrument.Tag
 
 @Service
 class KubernetesService(
     @TargetClient(ClientTypes.SERVICE_ACCOUNT)
-    val kubernetesClient: KubernetesCoroutinesClient
+    val kubernetesClient: KubernetesCoroutinesClient,
+    val meterRegistry: MeterRegistry,
 ) {
 
     fun findTemporaryProjects(now: Instant = Instant.now()): List<ProjectResource> = runBlocking {
         kubernetesClient.getMany(newProject { metadata { labels = newLabel(REMOVE_AFTER_LABEL) } })
             .filter { it.status.phase != TERMINATING_PHASE }
-    }.map { it.toResource(now) }
+    }.mapNotNull { it.toResource(now) }
 
     fun findTemporaryBuildConfigs(now: Instant = Instant.now()): List<BuildConfigResource> =
         runBlocking {
             kubernetesClient.getMany(newBuildConfig { metadata { labels = newLabel(REMOVE_AFTER_LABEL) } })
-        }.map { it.toResource(now) }
+        }.also {
+            meterRegistry.gauge("gorg_temporary_resource", listOf(Tag.of("resource", "BuildConfig")), it.size)
+        }.mapNotNull { it.toResource(now) }
 
     fun findTemporaryApplicationDeployments(now: Instant = Instant.now()): List<ApplicationDeploymentResource> =
         runBlocking {
