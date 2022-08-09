@@ -19,7 +19,8 @@ open class AbstractOpenShiftServerTest {
         url = url.toString()
     )
     private val client = config.createTestClient("test-token")
-    protected var mockClient = KubernetesCoroutinesClient(client)
+
+    protected var mockClient = KubernetesCoroutinesClient(client, null)
 
     @AfterEach
     fun tearDown() {
