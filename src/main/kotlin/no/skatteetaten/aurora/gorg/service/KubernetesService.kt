@@ -37,7 +37,7 @@ class KubernetesService(
             kubernetesClient.getMany(newBuildConfig { metadata { labels = newLabel(REMOVE_AFTER_LABEL) } })
         }.also {
             logger.info { "size of buildconfigs is ${it.size}" }
-            meterRegistry.gauge("gorg_temporary_resource", listOf(Tag.of("resource", "BuildConfig")), it.size.toDouble())
+            meterRegistry.gaugeCollectionSize("gorg_temporary_resource", listOf(Tag.of("resource", "BuildConfig")), it)
         }.mapNotNull { it.toResource(now) }
 
     fun findTemporaryApplicationDeployments(now: Instant = Instant.now()): List<ApplicationDeploymentResource> =
