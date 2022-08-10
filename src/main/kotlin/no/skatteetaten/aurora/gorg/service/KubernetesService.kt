@@ -16,6 +16,9 @@ import org.springframework.stereotype.Service
 import java.time.Instant
 import io.micrometer.core.instrument.MeterRegistry
 import io.micrometer.core.instrument.Tag
+import mu.KotlinLogging
+
+private val logger = KotlinLogging.logger {}
 
 @Service
 class KubernetesService(
@@ -33,6 +36,7 @@ class KubernetesService(
         runBlocking {
             kubernetesClient.getMany(newBuildConfig { metadata { labels = newLabel(REMOVE_AFTER_LABEL) } })
         }.also {
+            logger.info { "size of buildconfigs is ${it.size}" }
             meterRegistry.gauge("gorg_temporary_resource", listOf(Tag.of("resource", "BuildConfig")), it.size.toDouble())
         }.mapNotNull { it.toResource(now) }
 
