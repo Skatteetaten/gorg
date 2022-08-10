@@ -33,7 +33,7 @@ class KubernetesService(
         runBlocking {
             kubernetesClient.getMany(newBuildConfig { metadata { labels = newLabel(REMOVE_AFTER_LABEL) } })
         }.also {
-            meterRegistry.gauge("gorg_temporary_resource", listOf(Tag.of("resource", "BuildConfig")), it.size)
+            meterRegistry.gauge("gorg_temporary_resource", listOf(Tag.of("resource", "BuildConfig")), it.size.toDouble())
         }.mapNotNull { it.toResource(now) }
 
     fun findTemporaryApplicationDeployments(now: Instant = Instant.now()): List<ApplicationDeploymentResource> =
