@@ -36,9 +36,8 @@ class KubernetesService(
         runBlocking {
             kubernetesClient.getMany(newBuildConfig { metadata { labels = newLabel(REMOVE_AFTER_LABEL) } })
         }.also {
-
             val averageByteSize = it.map { bc-> bc.toString().toByteArray().size }.average()
-            logger.info { "Average byte size for bc is $averageByteSize" }
+            meterRegistry.gauge("gorg_temporary_resource_avg_size", listOf(Tag.of("resource", "BuildConfig")), averageByteSize)
             meterRegistry.gaugeCollectionSize("gorg_temporary_resource", listOf(Tag.of("resource", "BuildConfig")), it)
         }.mapNotNull { it.toResource(now) }
 
