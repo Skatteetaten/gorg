@@ -31,15 +31,13 @@ class KubernetesService(
 
     private fun <T : HasMetadata> List<T>.registerTemporaryResourceMetric(): List<T> {
         val kind = this.first().kind
-        val averageByteSize = this.map { bc -> bc.toString().toByteArray().size }
-        logger.info { "Got average byte size=$averageByteSize" }
-        Gauge.builder("gorg_temporary_resource_avg_size", averageByteSize) { it.average() }
+        Gauge.builder("gorg_temporary_resource_size", this) { it.toString().toByteArray().size.toDouble() }
             .tag("resource", kind)
             .strongReference(true)
             .register(meterRegistry)
 
 
-        Gauge.builder("gorg_temporary_resource", this){it.size.toDouble()}
+        Gauge.builder("gorg_temporary_resource", this) { it.size.toDouble() }
             .tag("resource", kind)
             .strongReference(true)
             .register(meterRegistry)
