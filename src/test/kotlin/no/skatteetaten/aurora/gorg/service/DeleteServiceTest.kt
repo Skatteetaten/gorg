@@ -106,7 +106,7 @@ class DeleteServiceTest : AbstractOpenShiftServerTest() {
         val ad = ApplicationDeploymentBuilder().build()
         val status = StatusResourceBuilder("Success").build()
         val request = mockServer.execute(status) {
-            val deleted = deleteService.deleteApplicationDeployment(ad.toResource(Instant.now()))
+            val deleted = deleteService.deleteApplicationDeployment(ad.toResource(Instant.now())!!)
             val deletedCount = meterRegistry.deletedResourcesCount("status", "deleted")
 
             assertThat(deleted).isTrue()
@@ -125,7 +125,7 @@ class DeleteServiceTest : AbstractOpenShiftServerTest() {
         val ad = ApplicationDeploymentBuilder().build()
         val status = StatusResourceBuilder("Failure").build()
         val request = mockServer.execute(404 to status) {
-            val deleted = deleteService.deleteApplicationDeployment(ad.toResource(Instant.now()))
+            val deleted = deleteService.deleteApplicationDeployment(ad.toResource(Instant.now())!!)
             val errorCount = meterRegistry.deletedResourcesCount("status", "error")
 
             assertThat(deleted).isFalse()
@@ -144,7 +144,7 @@ class DeleteServiceTest : AbstractOpenShiftServerTest() {
         val ad = ApplicationDeploymentBuilder().build()
         val status = StatusResourceBuilder("Failure").build()
         val request = mockServer.execute(500 to status) {
-            val deleted = deleteService.deleteApplicationDeployment(ad.toResource(Instant.now()))
+            val deleted = deleteService.deleteApplicationDeployment(ad.toResource(Instant.now())!!)
             val errorCount = meterRegistry.deletedResourcesCount("status", "error")
 
             assertThat(deleted).isFalse()
