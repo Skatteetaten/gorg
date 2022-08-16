@@ -15,6 +15,7 @@ import no.skatteetaten.aurora.kubernetes.newLabel
 import org.springframework.stereotype.Service
 import java.time.Instant
 import io.fabric8.kubernetes.api.model.HasMetadata
+import io.micrometer.core.instrument.Gauge
 import io.micrometer.core.instrument.MeterRegistry
 import io.micrometer.core.instrument.Tag
 import mu.KotlinLogging
@@ -30,9 +31,13 @@ class KubernetesService(
 
     private fun <T : HasMetadata> List<T>.registerTemporaryResourceMetric(): List<T> {
         val kind = this.first().kind
-        val averageByteSize = this.map { bc -> bc.toString().toByteArray().size }.average()
+        val averageByteSize = this.map { bc -> bc.toString().toByteArray().size }
         logger.info { "Got average byte size=$averageByteSize" }
-        meterRegistry.gauge("gorg_temporary_resource_avg_size", listOf(Tag.of("resource", kind)), averageByteSize)
+        Gauge.builder("gorg_temporary_resource_avg_size", averageByteSize) { it.average() }
+            .tag("resource", kind)
+            .strongReference(true)
+            .register(meterRegistry)
+
         meterRegistry.gaugeCollectionSize("gorg_temporary_resource", listOf(Tag.of("resource", kind)), this)
 
         return this
