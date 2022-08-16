@@ -38,7 +38,11 @@ class KubernetesService(
             .strongReference(true)
             .register(meterRegistry)
 
-        meterRegistry.gaugeCollectionSize("gorg_temporary_resource", listOf(Tag.of("resource", kind)), this)
+
+        Gauge.builder("gorg_temporary_resource", this){it.size.toDouble()}
+            .tag("resource", kind)
+            .strongReference(true)
+            .register(meterRegistry)
 
         return this
     }
