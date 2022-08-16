@@ -31,6 +31,7 @@ class KubernetesService(
     private fun <T : HasMetadata> List<T>.registerTemporaryResourceMetric(): List<T> {
         val kind = this.first().kind
         val averageByteSize = this.map { bc -> bc.toString().toByteArray().size }.average()
+        logger.info { "Got average byte size=$averageByteSize" }
         meterRegistry.gauge("gorg_temporary_resource_avg_size", listOf(Tag.of("resource", kind)), averageByteSize)
         meterRegistry.gaugeCollectionSize("gorg_temporary_resource", listOf(Tag.of("resource", kind)), this)
 
