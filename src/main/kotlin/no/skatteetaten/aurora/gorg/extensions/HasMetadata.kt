@@ -17,5 +17,6 @@ fun HasMetadata.removalTime(): Instant? {
             return null
         }
         Instant.ofEpochSecond(it.toLong())
-    } ?: throw IllegalStateException("removeAfter is not set or valid timestamp")
+    }
+        ?: throw IllegalStateException("removeAfter is not set or valid timestamp kind=${this.kind} namespace=${this.metadata.namespace} name=${this.metadata.name}")
 }

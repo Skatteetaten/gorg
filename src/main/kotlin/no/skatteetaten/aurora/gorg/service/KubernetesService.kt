@@ -57,5 +57,5 @@ class KubernetesService(
                 }
             )
         }.registerTemporaryResourceMetric()
-            .map { it.toResource(now) }
+            .mapNotNull { it.toResource(now) }
 }

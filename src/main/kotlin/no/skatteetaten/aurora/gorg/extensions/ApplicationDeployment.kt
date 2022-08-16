@@ -5,8 +5,8 @@ import no.skatteetaten.aurora.gorg.service.ApplicationDeploymentResource
 import java.time.Duration
 import java.time.Instant
 
-fun ApplicationDeployment.toResource(now: Instant): ApplicationDeploymentResource {
-    val removalTime = this.removalTime()
+fun ApplicationDeployment.toResource(now: Instant): ApplicationDeploymentResource? {
+    val removalTime = this.removalTime() ?: return null
 
     return ApplicationDeploymentResource(
         name = this.metadata.name,
@@ -15,11 +15,4 @@ fun ApplicationDeployment.toResource(now: Instant): ApplicationDeploymentResourc
         ttl = Duration.between(now, removalTime),
         removalTime = removalTime
     )
-}
-
-fun ApplicationDeployment.removalTime(): Instant {
-    return this.metadata.labels[REMOVE_AFTER_LABEL]?.let {
-        Instant.ofEpochSecond(it.toLong())
-    }
-        ?: throw IllegalStateException("removeAfter is not set or valid timestamp")
 }
