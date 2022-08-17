@@ -17,7 +17,6 @@ import java.time.Instant
 import io.fabric8.kubernetes.api.model.HasMetadata
 import io.micrometer.core.instrument.Gauge
 import io.micrometer.core.instrument.MeterRegistry
-import io.micrometer.core.instrument.Tag
 import mu.KotlinLogging
 
 private val logger = KotlinLogging.logger {}
@@ -35,7 +34,6 @@ class KubernetesService(
             .tag("resource", kind)
             .strongReference(true)
             .register(meterRegistry)
-
 
         Gauge.builder("gorg_temporary_resource", this) { it.size.toDouble() }
             .tag("resource", kind)

@@ -20,7 +20,7 @@ data class BuildConfigDataBuilder(
     val bcNamespace: String = "namespace",
     val bcKind: String = "BuildConfig",
     val bcName: String = "name",
-    val bcTtl: Instant = Instant.now().plusSeconds(60)
+    val bcTtl: String? = Instant.now().plusSeconds(60).epochSecond.toString()
 ) {
 
     fun build(): BuildConfig =
@@ -29,7 +29,11 @@ data class BuildConfigDataBuilder(
             metadata = newObjectMeta {
                 name = bcName
                 namespace = bcNamespace
-                labels = mapOf(REMOVE_AFTER_LABEL to bcTtl.epochSecond.toString())
+                labels = if (bcTtl == null) {
+                    emptyMap()
+                } else {
+                    mapOf(REMOVE_AFTER_LABEL to bcTtl)
+                }
             }
         }
 }
