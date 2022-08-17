@@ -17,9 +17,11 @@ import no.skatteetaten.aurora.mockmvc.extensions.mockwebserver.execute
 import org.junit.jupiter.api.Test
 import org.springframework.security.test.context.support.WithMockUser
 import java.time.Instant
+import io.micrometer.core.instrument.simple.SimpleMeterRegistry
 
 @WithMockUser
 class CrawlServiceTest : AbstractOpenShiftServerTest() {
+    private val meterRegistry = SimpleMeterRegistry()
 
     @Test
     fun `Find temporary buildConfigs`() {
@@ -28,7 +30,7 @@ class CrawlServiceTest : AbstractOpenShiftServerTest() {
             items = listOf(bc)
         }
         mockServer.execute(list) {
-            val service = KubernetesService(mockClient)
+            val service = KubernetesService(mockClient, meterRegistry)
             val buildConfigs = service.findTemporaryBuildConfigs(Instant.now())
             assertThat(buildConfigs).hasSize(1)
             assertThat(buildConfigs[0].name).isEqualTo("name")
@@ -46,7 +48,7 @@ class CrawlServiceTest : AbstractOpenShiftServerTest() {
         }
 
         mockServer.execute(list) {
-            val service = KubernetesService(mockClient)
+            val service = KubernetesService(mockClient, meterRegistry)
             val projects = service.findTemporaryProjects(Instant.now())
             assertThat(projects).hasSize(1)
             assertThat(projects[0].name).isEqualTo("name")
@@ -73,7 +75,7 @@ class CrawlServiceTest : AbstractOpenShiftServerTest() {
             items = listOf(ad)
         }
         mockServer.execute(list) {
-            val service = KubernetesService(mockClient)
+            val service = KubernetesService(mockClient, meterRegistry)
             val applications = service.findTemporaryApplicationDeployments(Instant.now())
             assertThat(applications).hasSize(1)
             assertThat(applications[0].name).isEqualTo("name")

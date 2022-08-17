@@ -14,22 +14,46 @@ import no.skatteetaten.aurora.kubernetes.config.TargetClient
 import no.skatteetaten.aurora.kubernetes.newLabel
 import org.springframework.stereotype.Service
 import java.time.Instant
+import io.fabric8.kubernetes.api.model.HasMetadata
+import io.micrometer.core.instrument.Gauge
+import io.micrometer.core.instrument.MeterRegistry
+import mu.KotlinLogging
+
+private val logger = KotlinLogging.logger {}
 
 @Service
 class KubernetesService(
     @TargetClient(ClientTypes.SERVICE_ACCOUNT)
-    val kubernetesClient: KubernetesCoroutinesClient
+    val kubernetesClient: KubernetesCoroutinesClient,
+    val meterRegistry: MeterRegistry,
 ) {
+
+    private fun <T : HasMetadata> List<T>.registerTemporaryResourceMetric(): List<T> {
+        val kind = this.first().kind
+        Gauge.builder("gorg_temporary_resource_size", this) { it.toString().toByteArray().size.toDouble() }
+            .tag("resource", kind)
+            .strongReference(true)
+            .register(meterRegistry)
+
+        Gauge.builder("gorg_temporary_resource", this) { it.size.toDouble() }
+            .tag("resource", kind)
+            .strongReference(true)
+            .register(meterRegistry)
+
+        return this
+    }
 
     fun findTemporaryProjects(now: Instant = Instant.now()): List<ProjectResource> = runBlocking {
         kubernetesClient.getMany(newProject { metadata { labels = newLabel(REMOVE_AFTER_LABEL) } })
             .filter { it.status.phase != TERMINATING_PHASE }
-    }.map { it.toResource(now) }
+    }.registerTemporaryResourceMetric()
+        .mapNotNull { it.toResource(now) }
 
     fun findTemporaryBuildConfigs(now: Instant = Instant.now()): List<BuildConfigResource> =
         runBlocking {
             kubernetesClient.getMany(newBuildConfig { metadata { labels = newLabel(REMOVE_AFTER_LABEL) } })
-        }.map { it.toResource(now) }
+        }.registerTemporaryResourceMetric()
+            .mapNotNull { it.toResource(now) }
 
     fun findTemporaryApplicationDeployments(now: Instant = Instant.now()): List<ApplicationDeploymentResource> =
         runBlocking {
@@ -38,5 +62,6 @@ class KubernetesService(
                     metadata { labels = newLabel(REMOVE_AFTER_LABEL) }
                 }
             )
-        }.map { it.toResource(now) }
+        }.registerTemporaryResourceMetric()
+            .mapNotNull { it.toResource(now) }
 }

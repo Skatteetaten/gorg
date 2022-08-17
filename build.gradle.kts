@@ -7,6 +7,9 @@ aurora {
     useKotlinDefaults
     useSpringBootDefaults
     useAsciiDoctor
+    versions {
+        javaSourceCompatibility = "17"
+    }
 }
 
 dependencies {
@@ -21,9 +24,10 @@ dependencies {
     testImplementation("io.mockk:mockk:1.12.5")
     testImplementation("com.willowtreeapps.assertk:assertk-jvm:0.25")
     testImplementation("com.nhaarman:mockito-kotlin:1.6.0")
-    testImplementation("no.skatteetaten.aurora:mockmvc-extensions-kotlin:1.1.7")
+    testImplementation("no.skatteetaten.aurora:mockmvc-extensions-kotlin:1.1.8")
     testImplementation("no.skatteetaten.aurora:mockwebserver-extensions-kotlin:1.3.1")
 }
+
 repositories {
     mavenCentral()
 }
